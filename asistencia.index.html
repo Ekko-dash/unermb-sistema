@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unermb - Control de asistencia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="asistencia.css">
+</head>
+
+
+<body>
+
+    <script src="navbar_controller.js"></script>
+
+    <header class="navbar-superior">
+        <div class="logo-nav-contenedor">
+            <div class="circulo-logo-nav">
+                <img src="logo barlt.jpeg" alt="Logo Unermb">
+            </div>
+        </div>
+        <nav class="enlaces-contenedor">
+            <!-- Los enlaces se cargarán dinámicamente -->
+        </nav>
+        <button id="btn-modo" onclick="alternarModo()">
+            <span id="icono-modo">🌙</span> <span id="texto-modo">Modo oscuro</span>
+        </button>
+    </header>
+
+    <main class="main-wrapper">
+        <div class="grid-asistencia">
+            <section class="contenedor-principal">
+                <div class="encabezado-cuadro">
+                    <h2 class="titulo-registro">Firma digital</h2>
+                    <p class="subtitulo">Sede la vega | Control de acceso</p>
+                </div>
+                <div class="cuerpo-cuadro">
+                    <div class="grupo-input">
+                        <label class="label-pro">Cédula de identidad</label>
+                        <input type="text" id="cedulaInput" class="input-pro" inputmode="numeric" maxlength="8"
+                            autofocus>
+                    </div>
+                    <button class="btn-guardar" id="btnRegistrar">Registrar firma</button>
+                </div>
+            </section>
+
+            <section class="contenedor-principal">
+                <div class="encabezado-cuadro">
+                    <h3 class="titulo-registro">Monitor de personal</h3>
+                    <p class="subtitulo">Estado en tiempo real</p>
+                </div>
+                <div class="scroll-pro">
+                    <table class="tabla-asistencia">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Personal / cargo</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpo-asistencias"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="modalAlert" class="overlay-modal">
+        <div class="box-modal">
+            <div class="aro-blanco-alerta">
+                <div id="modalCirculo" class="icono-alerta">
+                    <span id="modalIcono">!</span>
+                </div>
+            </div>
+            <h3 id="modalTitulo" class="titulo-registro" style="font-size: 20px;">Sistema</h3>
+            <p id="modalMensaje" style="color: white; margin-bottom: 20px; font-weight: 700;"></p>
+            <button class="btn-modal" onclick="cerrarModal()">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+
+
+
+
+        // ---------- CONTROL DE ENVÍO ----------
+        let enviando = false;
+        const cedulaInput = document.getElementById('cedulaInput');
+        const btnRegistrar = document.getElementById('btnRegistrar');
+
+        // ---------- FILTRO CÉDULA (solo números, máximo 8 dígitos) ----------
+        cedulaInput.addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 8) this.value = this.value.slice(0, 8);
+        });
+        cedulaInput.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length > 8) this.value = this.value.slice(0, 8);
+            }, 0);
+        });
+
+        // ---------- VALIDACIÓN: EXACTAMENTE 8 DÍGITOS ----------
+        function esCedulaValida(cedula) {
+            return /^\d{8}$/.test(cedula);
+        }
+
+        // ---------- MODO OSCURO ----------
+        function alternarModo() {
+            document.body.classList.toggle('modo-claro');
+            const esClaro = document.body.classList.contains('modo-claro');
+            document.getElementById('icono-modo').innerText = esClaro ? '☀️' : '🌙';
+            document.getElementById('texto-modo').innerText = esClaro ? 'Modo claro' : 'Modo oscuro';
+            localStorage.setItem('theme', esClaro ? 'light' : 'dark');
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('modo-claro');
+                document.getElementById('icono-modo').innerText = '☀️';
+                document.getElementById('texto-modo').innerText = 'Modo claro';
+            }
+            cargarMonitor();
+        };
+
+        // ---------- PROCESAR FIRMA (ENTRADA / SALIDA) ----------
+        async function procesarFirma() {
+            if (enviando) return;
+            const ced = cedulaInput.value.trim();
+            if (!ced) {
+                mostrarAlerta("error", "Aviso", "Ingrese la cédula.");
+                return;
+            }
+            if (!esCedulaValida(ced)) {
+                mostrarAlerta("error", "Cédula Inválida", "La cédula debe tener exactamente 8 dígitos numéricos.");
+                return;
+            }
+
+            enviando = true;
+            btnRegistrar.disabled = true;
+            btnRegistrar.textContent = "Procesando...";
+
+            try {
+                // Asegúrate de que la URL sea correcta (misma carpeta)
+                const response = await fetch('guardar_asistencia.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'cedula=' + encodeURIComponent(ced)
+                });
+
+                // Verificar si la respuesta es válida
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Respuesta del servidor:", data); // Para depuración
+
+                if (data.status === "success") {
+                    await cargarMonitor();
+                    mostrarAlerta("success", "Éxito", `${data.nombre}: ${data.mensaje}`);
+                    cedulaInput.value = "";
+                } else {
+                    mostrarAlerta("error", "Error", data.mensaje);
+                }
+                cedulaInput.focus();
+            } catch (error) {
+                console.error("Error detallado:", error);
+                mostrarAlerta("error", "Conexión", "Fallo al conectar con el servidor. Verifica que XAMPP esté ejecutándose y que los archivos PHP estén en la carpeta correcta.");
+            } finally {
+                enviando = false;
+                btnRegistrar.disabled = false;
+                btnRegistrar.textContent = "Registrar firma";
+            }
+        }
+
+        btnRegistrar.addEventListener('click', procesarFirma);
+        cedulaInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') procesarFirma();
+        });
+
+        // ---------- CARGAR TABLA DE ASISTENCIAS ----------
+        async function cargarMonitor() {
+            try {
+                const res = await fetch('obtener_asistencias.php');
+                if (!res.ok) throw new Error('Error al cargar asistencias');
+                const data = await res.json();
+                const tbody = document.getElementById('cuerpo-asistencias');
+                tbody.innerHTML = "";
+
+                if (data.error) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">${data.error}</td></tr>`;
+                    return;
+                }
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay registros de asistencia</td></tr>';
+                    return;
+                }
+
+                data.forEach(r => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${r.fecha}</td>
+                            <td><b>${r.nombre_completo || r.nombre}</b><br><small>${r.cargo || 'Personal'}</small></td>
+                            <td>${r.entrada || '--:--'}</td>
+                            <td>${r.salida || '--:--'}</td>
+                        </tr>`;
+                });
+            } catch (err) {
+                console.error("Error cargando monitor:", err);
+                document.getElementById('cuerpo-asistencias').innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ff3d00;">Error al cargar datos</td></tr>';
+            }
+        }
+
+        // ---------- MODAL DE ALERTA ----------
+        function mostrarAlerta(tipo, titulo, mensaje) {
+            const modal = document.getElementById('modalAlert');
+            const circulo = document.getElementById('modalCirculo');
+            const icono = document.getElementById('modalIcono');
+            circulo.className = "icono-alerta " + (tipo === "success" ? "exito-color" : "error-color");
+            icono.innerHTML = tipo === "success" ? "✓" : "!";
+            document.getElementById('modalTitulo').innerText = titulo;
+            document.getElementById('modalMensaje').innerText = mensaje;
+            modal.style.display = "flex";
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalAlert').style.display = "none";
+            cedulaInput.focus();
+        }
+    </script>
+    <script src="boton_dashboard_universal.js"></script>
+</body>
+
+</html>

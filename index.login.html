@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="Es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unermb - Login Eléctrico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+
+    <nav class="navbar-superior">
+        <div class="circulo-logo-nav"><img src="logo barlt.jpeg" alt="Logo Unermb"></div>
+        <div class="enlaces-contenedor">
+
+            <a href="asistencia.index.html">Asistencia</a>
+            >
+        </div>
+        <button id="btn-modo" onclick="alternarModo()">
+            <span id="icono-modo">🌙</span> <span id="texto-modo">Modo Oscuro</span>
+        </button>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="card-login">
+            <div class="panel-azul">
+                <div class="logo-box"><img src="logo barlt.jpeg"></div>
+                <h1 class="titulo-unermb">Unermb</h1>
+                <div class="badge-personal">Sede La Vega</div>
+            </div>
+
+            <div class="panel-form">
+                <form id="formAcceso" method="POST" novalidate>
+                    <div class="instruccion">Panel De Acceso</div>
+
+                    <label class="etiqueta-login" for="user">Usuario Del Sistema</label>
+                    <input type="text" id="user" name="usuario" autocomplete="off" maxlength="30">
+
+                    <label class="etiqueta-login" for="pass">Contraseña De Seguridad</label>
+                    <div class="Wrapper-Password">
+                        <input type="password" id="pass" name="password" maxlength="20">
+                        <button type="button" id="TogglePasswordBtn" class="Btn-Ver-Password" onclick="verContraseña()">
+                            <span class="Puntito-Centro"></span>
+                        </button>
+                    </div>
+                    <div id="passwordStrength" class="password-strength"></div>
+
+                    <button type="submit" class="btn-ingresar">Entrar Al Sistema</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAlerta" class="overlay-modal">
+        <div class="box-modal">
+            <div class="aro-blanco-alerta">
+                <div id="modalIcono" class="icono-alerta">!</div>
+            </div>
+            <h2 id="tituloAlerta">Sistema</h2>
+            <p id="mensajeAlerta"></p>
+            <button type="button" class="btn-modal" onclick="cerrarModal()">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        // ---------- MODO OSCURO/CLARO ----------
+        function alternarModo() {
+            document.body.classList.toggle('modo-claro');
+            const EsModoClaro = document.body.classList.contains('modo-claro');
+            document.getElementById('icono-modo').innerText = EsModoClaro ? '☀️' : '🌙';
+            document.getElementById('texto-modo').innerText = EsModoClaro ? 'Modo Claro' : 'Modo Oscuro';
+            localStorage.setItem('theme', EsModoClaro ? 'light' : 'dark');
+        }
+
+        function verContraseña() {
+            const PasswordInput = document.getElementById('pass');
+            const ToggleBtn = document.getElementById('TogglePasswordBtn');
+
+            if (PasswordInput.type === 'password') {
+                PasswordInput.type = 'text';
+                ToggleBtn.classList.add('Activado');
+            } else {
+                PasswordInput.type = 'password';
+                ToggleBtn.classList.remove('Activado');
+            }
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('modo-claro');
+                document.getElementById('icono-modo').innerText = '☀️';
+                document.getElementById('texto-modo').innerText = 'Modo Claro';
+            }
+            actualizarFortaleza();
+        };
+
+        // ========== VALIDACIONES ROBUSTAS ==========
+        function tieneSentido(texto, minLength, maxLength) {
+            const limpio = texto.trim();
+            if (limpio.length < minLength || limpio.length > maxLength) return false;
+            const primerCar = limpio[0];
+            if (limpio.split('').every(c => c === primerCar)) return false;
+            const secuenciasBasura = [
+                "qwerty", "asdfgh", "zxcvbn", "123456", "abcdef",
+                "qwe", "asd", "zxc", "rty", "fgh", "vbn", "uiop",
+                "11111", "22222", "aaaaa", "bbbbb", "mmmmm", "nnnnn"
+            ];
+            const lower = limpio.toLowerCase();
+            for (let seq of secuenciasBasura) {
+                if (lower.includes(seq)) return false;
+            }
+            if (!/[aeiouáéíóúü]/i.test(limpio)) return false;
+            if (/(.)\1{4,}/.test(limpio)) return false;
+            return true;
+        }
+
+        // VALIDACIÓN DE USUARIO: permite letras (con acentos y ñ), números, guiones, guiones bajos y espacios
+        function esUsuarioValido(usuario) {
+            if (!tieneSentido(usuario, 3, 30)) return false;
+            // Ahora incluimos letras acentuadas y la ñ (mayúsculas y minúsculas)
+            const soloCaracteresPermitidos = /^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s0-9\_\-]+$/;
+            return soloCaracteresPermitidos.test(usuario.trim());
+        }
+
+        function evaluarFortaleza(password) {
+            let nivel = 0;
+            if (password.length >= 8) nivel++;
+            if (/[a-z]/.test(password)) nivel++;
+            if (/[A-Z]/.test(password)) nivel++;
+            if (/\d/.test(password)) nivel++;
+            if (/[^A-Za-z0-9]/.test(password)) nivel++;
+
+            if (password.length < 8 || nivel < 3) return 'Débil';
+            if (nivel < 5) return 'Media';
+            return 'Segura';
+        }
+
+        function esPasswordValida(pass) {
+            return evaluarFortaleza(pass) === 'Segura';
+        }
+
+        const passwordInput = document.getElementById('pass');
+        const strengthDiv = document.getElementById('passwordStrength');
+
+        function actualizarFortaleza() {
+            const valor = passwordInput.value;
+            if (valor === '') {
+                strengthDiv.textContent = '';
+                strengthDiv.className = 'password-strength';
+                return;
+            }
+            const fortaleza = evaluarFortaleza(valor);
+            strengthDiv.textContent = 'Nivel: ' + fortaleza;
+            strengthDiv.className = 'password-strength strength-' + fortaleza.toLowerCase();
+        }
+
+        if (passwordInput) {
+            passwordInput.addEventListener('input', actualizarFortaleza);
+        }
+
+        // ---------- MODAL ----------
+        const Modal = document.getElementById('modalAlerta');
+
+        function mostrarAlerta(Tipo, Tit, Msg) {
+            const Icono = document.getElementById('modalIcono');
+            Icono.className = "icono-alerta " + (Tipo === "success" ? "exito-color" : "error-color");
+            Icono.innerHTML = Tipo === "success" ? "✓" : "!";
+            document.getElementById('tituloAlerta').innerText = Tit;
+            document.getElementById('mensajeAlerta').innerText = Msg;
+            Modal.style.display = 'flex';
+        }
+
+        function cerrarModal() { Modal.style.display = 'none'; }
+
+        // ---------- ENVÍO DEL FORMULARIO ----------
+        const Form = document.getElementById('formAcceso');
+
+        Form.onsubmit = async (E) => {
+            E.preventDefault();
+            const Usuario = document.getElementById('user').value.trim();
+            const Password = document.getElementById('pass').value.trim();
+
+            if (!Usuario || !Password) {
+                mostrarAlerta("error", "Campos Vacíos", "Por favor, complete todos los campos.");
+                return;
+            }
+
+            if (!esUsuarioValido(Usuario)) {
+                mostrarAlerta("error", "Usuario Inválido", "El usuario no es válido. Debe tener entre 3 y 30 caracteres (solo letras (con o sin acentos), números, guiones, guiones bajos o espacios), sin repeticiones absurdas.");
+                return;
+            }
+
+            if (!esPasswordValida(Password)) {
+                mostrarAlerta("error", "Contraseña Inválida", "La contraseña debe ser segura. Asegúrate de que tenga entre 8 y 20 caracteres, una mayúscula, una minúscula, un número y un carácter especial (ej: @, #, $, etc.).");
+                return;
+            }
+
+            try {
+                const FormDataObj = new FormData(Form);
+                const Response = await fetch('login.php', { method: 'POST', body: FormDataObj });
+                const Result = await Response.json();
+
+                if (Result.success) {
+                    mostrarAlerta("success", "Bienvenido", Result.message);
+                    setTimeout(() => { window.location.href = Result.redirect; }, 2000);
+                } else {
+                    mostrarAlerta("error", "Error", Result.message);
+                }
+            } catch (Error) {
+                mostrarAlerta("error", "Conexión", "Error al conectar con el servidor.");
+            }
+        };
+    </script>
+</body>
+
+</html>

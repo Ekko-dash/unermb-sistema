@@ -1,0 +1,452 @@
+/* ==========================================================================
+   --- registro.css (DISEÑO INTEGRAL - EL MODO CLARO SOLO CAMBIA EL FONDO) ---
+   ========================================================================== */
+
+:root {
+    --bg-oscuro: #050a0f;
+    --bg-gradiente: radial-gradient(circle at center, #0d1b2a 0%, #050a0f 100%);
+    --tarjeta: #161b22;
+    --cian-neon: #00e5ff;
+    --verde-exito: #00e676;
+    --rojo-error: #ff3d00;
+    --blanco: #ffffff;
+    --texto-input: #000000;
+    --bg-input: #ffffff;
+    --navbar-bg: #000000;
+}
+
+/* INTERRUPTOR EXCLUSIVO DE FONDO: No toca tarjetas, textos, ni bordes */
+body.light-mode {
+    --bg-gradiente: #ffffff;
+    /* Fondo blanco puro para descansar la vista */
+}
+
+/* --- BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: var(--bg-gradiente);
+    color: var(--blanco);
+    min-height: 100vh;
+    transition: background 0.3s ease;
+}
+
+/* --- NAVBAR Y LOGO --- */
+.navbar-superior {
+    background: var(--navbar-bg);
+    padding: 12px 25px;
+    border-bottom: 2px solid var(--cian-neon);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    box-shadow: 0 4px 20px rgba(0, 229, 255, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-izquierda-grupo {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.circulo-logo-nav {
+    width: 55px;
+    height: 55px;
+    background: #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--cian-neon);
+    box-shadow: 0 0 15px var(--cian-neon);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circulo-logo-nav img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+}
+
+.enlaces-contenedor {
+    display: flex;
+    flex-direction: row;
+    gap: 18px;
+}
+
+.enlaces-contenedor a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 11px;
+    text-transform: capitalize;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+.enlaces-contenedor a:hover {
+    color: var(--cian-neon);
+}
+
+.enlaces-contenedor a.active {
+    color: var(--cian-neon);
+    text-shadow: 0 0 8px var(--cian-neon);
+}
+
+/* --- BOTÓN INTERRUPTOR --- */
+.btn-theme-toggle {
+    background: transparent;
+    border: 2px solid var(--cian-neon);
+    color: var(--cian-neon);
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: capitalize;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+.btn-theme-toggle:hover {
+    background: var(--cian-neon);
+    color: #000000;
+    box-shadow: 0 0 20px var(--cian-neon);
+    transform: translateY(-1px);
+}
+
+/* --- TÍTULOS --- */
+.titulo-registro {
+    color: var(--cian-neon);
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: capitalize;
+    letter-spacing: 1px;
+}
+
+.subtitulo {
+    font-size: 10px;
+    font-weight: 900;
+    opacity: 0.7;
+    letter-spacing: 3px;
+    color: #ffffff;
+    margin-top: 5px;
+    text-transform: capitalize;
+}
+
+/* --- CONTENEDOR TARJETA ORIGINAL --- */
+.main-wrapper {
+    padding: 50px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contenedor-principal {
+    background: var(--tarjeta);
+    border-radius: 40px;
+    width: 100%;
+    max-width: 480px;
+    padding: 45px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(5px);
+}
+
+/* --- INPUTS Y LABELS --- */
+.grupo-input {
+    margin-bottom: 22px;
+}
+
+.label-pro {
+    display: block;
+    color: var(--cian-neon);
+    font-weight: 900;
+    font-size: 11px;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+}
+
+.input-pro {
+    width: 100%;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid transparent;
+    background: var(--bg-input);
+    color: var(--texto-input) !important;
+    font-weight: 700;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-pro:focus {
+    outline: none;
+    border-color: var(--cian-neon);
+    box-shadow: inset 0 0 0 2px var(--cian-neon),
+        /* Borde interno de 2px */
+        0 0 15px var(--cian-neon);
+    /* Resplandor externo */
+    background: #fff;
+}
+
+select.input-pro option {
+    background: var(--tarjeta);
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   AGREGADO: ESTILOS PARA EL PUNTICO CON EL ARO AZUL CELESTE
+   ========================================================================== */
+.contrasena-contenedor {
+    position: relative;
+    width: 100%;
+}
+
+.input-password {
+    padding-right: 60px !important;
+    /* Evita que el texto de la clave se meta debajo del botón */
+}
+
+.btn-puntico-aro {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgba(0, 229, 255, 0.4);
+    /* El Aro Exterior Celeste */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+/* El puntico central */
+.btn-puntico-aro::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--cian-neon);
+    /* Color brillante original */
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.btn-puntico-aro:hover {
+    border-color: var(--cian-neon);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+}
+
+/* Estado Activo: Cuando se muestra la contraseña, cambia a un gris sobrio */
+.btn-puntico-aro.activo::after {
+    background: #555555;
+    transform: scale(0.8);
+}
+
+/* ==========================================================================
+   --- FIN AGREGADO ---
+   ========================================================================== */
+
+/* --- BOTÓN GUARDAR --- */
+.btn-guardar {
+    width: 100%;
+    padding: 20px;
+    background: var(--cian-neon);
+    color: #000000;
+    border: none;
+    border-radius: 22px;
+    font-weight: 900;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: 0.4s;
+}
+
+.btn-guardar:hover {
+    box-shadow: 0 0 25px var(--cian-neon);
+    transform: translateY(-2px);
+    background: #ffffff;
+    color: #000000;
+}
+
+/* --- MODAL (FIJO ESTILO WORD NEGRO Y ENÉRGICO) --- */
+.overlay-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(15px);
+}
+
+.box-modal {
+    background: var(--tarjeta);
+    padding: 45px 35px;
+    border-radius: 45px;
+    border: 2px solid var(--cian-neon);
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 0 0 50px rgba(0, 229, 255, 0.3);
+    text-transform: capitalize;
+}
+
+.aro-blanco-alerta {
+    width: 95px;
+    height: 95px;
+    border: 6px solid #ffffff;
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icono-alerta {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 38px;
+    font-weight: 900;
+}
+
+.exito-color {
+    background: var(--verde-exito);
+    color: #000;
+    box-shadow: 0 0 25px var(--verde-exito);
+}
+
+.error-color {
+    background: var(--rojo-error);
+    color: #fff;
+    box-shadow: 0 0 25px var(--rojo-error);
+}
+
+#modalTitulo {
+    color: var(--cian-neon);
+    font-weight: 900;
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+#modalMensaje {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.btn-modal {
+    width: 100%;
+    padding: 16px;
+    background: var(--cian-neon);
+    color: #000000;
+    border: none;
+    border-radius: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.btn-modal:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+/* ==========================================================================
+   ESTILOS PARA BOTÓN DE CONTRASEÑA Y FORTALEZA - VERSIÓN FINAL
+   ========================================================================== */
+
+.contrasena-contenedor {
+    position: relative;
+    width: 100%;
+}
+
+.input-password {
+    padding-right: 55px !important;
+}
+
+.btn-puntico-aro {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1.5px solid var(--cian-neon);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+    z-index: 10;
+}
+
+.btn-puntico-aro:focus {
+    outline: none;
+}
+
+.puntito-centro {
+    width: 6px;
+    height: 6px;
+    background: var(--cian-neon);
+    border-radius: 50%;
+    transition: all 0.25s;
+}
+
+/* Estado activado del botón (muestra contraseña) */
+.btn-puntico-aro.activado {
+    background: var(--cian-neon);
+}
+
+.btn-puntico-aro.activado .puntito-centro {
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border: 2px solid #000;
+}
+
+/* Indicador de fortaleza de contraseña */
+.strength-Debil {
+    color: #e74c3c !important;
+    /* ROJO - con tilde */
+}
+
+.strength-Media {
+    color: #f39c12 !important;
+}
+
+.strength-Segura {
+    color: #2ecc71 !important;
+}

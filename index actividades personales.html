@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de actividades - Unermb</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="actividades.css">
+</head>
+
+<body>
+    <script src="navbar_controller.js"></script>
+    <header class="navbar">
+        <div class="circulo-logo-nav">
+            <img src="logo barlt.jpeg" alt="Logo">
+        </div>
+        <nav class="nav-links">
+            <!-- Los enlaces se cargarán dinámicamente -->
+        </nav>
+        <button id="btn-modo" onclick="alternarModo()" class="btn-theme">
+            <span id="icono-modo">🌙</span> <span id="texto-modo">Modo oscuro</span>
+        </button>
+    </header>
+
+    <main class="wrapper">
+        <div class="contenedor-principal">
+            <section class="seccion-carga">
+                <div class="branding">
+                    <div class="circulo-logo-branding">
+                        <img src="logo barlt.jpeg">
+                    </div>
+                    <h2>Monitor</h2>
+                    <p class="subtitulo">Sede la vega</p>
+                </div>
+
+                <button id="btn-desplegar" class="btn-cyan-pro" onclick="mostrarForm()">Nueva actividad</button>
+
+                <div id="form-actividad" class="form-oculto">
+                    <label class="etiqueta-pro">Nombre del encargado</label>
+                    <input type="text" id="responsable" class="input-pro" maxlength="30" required>
+
+                    <label class="etiqueta-pro">Descripción de la actividad</label>
+                    <textarea id="detalle" class="input-pro" rows="3" required style="resize: none;"></textarea>
+
+                    <label class="etiqueta-pro">Contraseña de seguridad</label>
+                    <div class="contenedor-password">
+                        <input type="password" id="clave_seguridad" class="input-pro" maxlength="20">
+                        <button type="button" class="btn-puntico-aro" onclick="togglePassword()"></button>
+                    </div>
+                    <div id="passwordStrength" class="password-strength"></div>
+
+                    <button class="btn-subir-neon" onclick="publicarActividad()">Publicar en vivo</button>
+                    <button class="btn-cancelar" onclick="cancelarFormulario()">Cancelar</button>
+                </div>
+            </section>
+
+            <section class="seccion-visual">
+                <div class="header-reportes">
+                    <h3>Reportes</h3>
+                    <span class="status-vivo">En vivo</span>
+                </div>
+                <div id="mural-actividades">
+                    <p class="texto-carga">Cargando...</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="modalAlert" class="overlay-modal">
+        <div class="box-modal">
+            <div class="aro-blanco-alerta">
+                <div id="modalIcono" class="icono-alerta">!</div>
+            </div>
+            <h3 id="modalTitulo">Sistema</h3>
+            <p id="modalMensaje"></p>
+            <button class="btn-modal" onclick="cerrarModal()">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== VALIDACIONES ==========
+        function esNombreValido(nombre) {
+            nombre = nombre.trim();
+            if (nombre.length < 3 || nombre.length > 30) return false;
+            const soloLetras = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑü\s\.\'\-]+$/;
+            if (!soloLetras.test(nombre)) return false;
+            if (/(.)\1{2,}/.test(nombre)) return false;
+            const primeraLetra = nombre[0];
+            if (nombre.split('').every(car => car === primeraLetra)) return false;
+            if (!/[aeiouáéíóúü]/i.test(nombre)) return false;
+            return true;
+        }
+
+        function tieneSentido(texto, minLength, maxLength) {
+            const limpio = texto.trim();
+            if (limpio.length < minLength || limpio.length > maxLength) return false;
+            const primerCar = limpio[0];
+            if (limpio.split('').every(c => c === primerCar)) return false;
+            const secuenciasBasura = [
+                "qwerty", "asdfgh", "zxcvbn", "123456", "abcdef",
+                "qwe", "asd", "zxc", "rty", "fgh", "vbn", "uiop",
+                "11111", "22222", "aaaaa", "bbbbb", "mmmmm", "nnnnn"
+            ];
+            const lower = limpio.toLowerCase();
+            for (let seq of secuenciasBasura) {
+                if (lower.includes(seq)) return false;
+            }
+            if (!/[aeiouáéíóúü]/i.test(limpio)) return false;
+            if (/(.)\1{4,}/.test(limpio)) return false;
+            return true;
+        }
+
+        // NUEVA VALIDACIÓN: contar palabras (separadas por espacios) y verificar sentido básico
+        function esDescripcionValida(desc) {
+            const limpio = desc.trim();
+            if (limpio.length === 0) return false;
+            // Contar palabras (cualquier secuencia separada por espacios)
+            const palabras = limpio.split(/\s+/).filter(p => p.length > 0);
+            if (palabras.length < 10 || palabras.length > 500) return false;
+            // Además, que tenga sentido (evitar repeticiones absurdas)
+            // Aplicamos una versión ligera: que no sea todo el mismo carácter, etc.
+            const primerCar = limpio[0];
+            if (limpio.split('').every(c => c === primerCar)) return false;
+            const secuenciasBasura = [
+                "qwerty", "asdfgh", "zxcvbn", "123456", "abcdef",
+                "qwe", "asd", "zxc", "rty", "fgh", "vbn", "uiop",
+                "11111", "22222", "aaaaa", "bbbbb", "mmmmm", "nnnnn"
+            ];
+            const lower = limpio.toLowerCase();
+            for (let seq of secuenciasBasura) {
+                if (lower.includes(seq)) return false;
+            }
+            if (!/[aeiouáéíóúü]/i.test(limpio)) return false;
+            if (/(.)\1{4,}/.test(limpio)) return false;
+            return true;
+        }
+
+        function evaluarFortaleza(password) {
+            let nivel = 0;
+            if (password.length >= 8) nivel++;
+            if (/[a-z]/.test(password)) nivel++;
+            if (/[A-Z]/.test(password)) nivel++;
+            if (/\d/.test(password)) nivel++;
+            if (/[^A-Za-z0-9]/.test(password)) nivel++;
+            if (password.length < 8 || nivel < 3) return 'Débil';
+            if (nivel < 5) return 'Media';
+            return 'Segura';
+        }
+
+        function esPasswordValida(pass) {
+            return evaluarFortaleza(pass) === 'Segura';
+        }
+
+        const passwordInput = document.getElementById('clave_seguridad');
+        const passwordStrengthDiv = document.getElementById('passwordStrength');
+
+        function actualizarFortaleza() {
+            const valor = passwordInput.value;
+            if (valor === '') {
+                passwordStrengthDiv.textContent = '';
+                passwordStrengthDiv.className = 'password-strength';
+                return;
+            }
+            const fortaleza = evaluarFortaleza(valor);
+            passwordStrengthDiv.textContent = 'Nivel: ' + fortaleza;
+            passwordStrengthDiv.className = 'password-strength strength-' + fortaleza.toLowerCase();
+        }
+
+        if (passwordInput) {
+            passwordInput.addEventListener('input', actualizarFortaleza);
+        }
+
+        function alternarModo() {
+            document.body.classList.toggle('modo-claro');
+            const esModoClaro = document.body.classList.contains('modo-claro');
+            document.getElementById('icono-modo').innerText = esModoClaro ? '☀️' : '🌙';
+            document.getElementById('texto-modo').innerText = esModoClaro ? 'Modo claro' : 'Modo oscuro';
+            localStorage.setItem('theme', esModoClaro ? 'light' : 'dark');
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('clave_seguridad');
+            const btn = document.querySelector('.btn-puntico-aro');
+            if (input.type === "password") {
+                input.type = "text";
+                btn.classList.add('activado');
+            } else {
+                input.type = "password";
+                btn.classList.remove('activado');
+            }
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('modo-claro');
+                document.getElementById('icono-modo').innerText = '☀️';
+                document.getElementById('texto-modo').innerText = 'Modo claro';
+            }
+            cargarActividades();
+            setInterval(cargarActividades, 30000);
+            actualizarFortaleza();
+        };
+
+        function mostrarForm() {
+            document.getElementById('form-actividad').style.display = 'block';
+            document.getElementById('btn-desplegar').style.display = 'none';
+        }
+
+        function cancelarFormulario() {
+            document.getElementById('form-actividad').style.display = 'none';
+            document.getElementById('btn-desplegar').style.display = 'block';
+            document.getElementById('responsable').value = "";
+            document.getElementById('detalle').value = "";
+            document.getElementById('clave_seguridad').value = "";
+            const btn = document.querySelector('.btn-puntico-aro');
+            if (btn) btn.classList.remove('activado');
+            actualizarFortaleza();
+        }
+
+        async function publicarActividad() {
+            const responsable = document.getElementById('responsable').value.trim();
+            const detalle = document.getElementById('detalle').value.trim();
+            const password = passwordInput.value;
+
+            if (!responsable || !detalle || !password) {
+                mostrarAlerta("error", "Campos vacíos", "Por favor, complete todos los campos.");
+                return;
+            }
+
+            if (!esNombreValido(responsable)) {
+                mostrarAlerta("error", "Nombre inválido", "El nombre completo no es válido. Debe tener entre 3 y 30 caracteres, sin repeticiones absurdas.");
+                return;
+            }
+            if (!esDescripcionValida(detalle)) {
+                mostrarAlerta("error", "Descripción inválida", "La descripción no es válida. Debe tener entre 10 y 500 palabras, sin repeticiones absurdas.");
+                return;
+            }
+            if (!esPasswordValida(password)) {
+                mostrarAlerta("error", "Contraseña insegura", "La contraseña debe ser segura. Asegúrate de que tenga al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (ej: @, #, $, etc.).");
+                return;
+            }
+
+            const fd = new FormData();
+            fd.append('responsable', responsable);
+            fd.append('detalle', detalle);
+            fd.append('password', password);
+
+            try {
+                const res = await fetch('guardar_actividad.php', { method: 'POST', body: fd });
+                const data = await res.json();
+                if (data.success) {
+                    mostrarAlerta("success", "Éxito", data.message);
+                    cancelarFormulario();
+                    cargarActividades();
+                } else {
+                    mostrarAlerta("error", "Acceso denegado", data.message);
+                }
+            } catch (e) {
+                mostrarAlerta("error", "Error", "Falla de comunicación con el servidor.");
+            }
+        }
+
+        async function cargarActividades() {
+            const mural = document.getElementById('mural-actividades');
+            try {
+                const res = await fetch('obtener_actividades.php');
+                const actividades = await res.json();
+                mural.innerHTML = "";
+                if (!actividades.length) {
+                    mural.innerHTML = '<p class="texto-vacio">📢 No hay actividades registradas.</p>';
+                    return;
+                }
+                actividades.forEach(act => {
+                    const card = document.createElement('div');
+                    card.className = 'card-actividad';
+                    card.innerHTML = `
+                    <div class="card-header-info">
+                        <span>Actividad oficial</span>
+                        <span>${act.fecha}</span>
+                    </div>
+                    <strong class="card-responsable">${act.responsable}</strong>
+                    <p class="card-detalle"><strong>Detalle:</strong> ${act.detalle}</p>`;
+                    mural.appendChild(card);
+                });
+            } catch (e) {
+                mural.innerHTML = '<p class="texto-error">Error al conectar con el servidor.</p>';
+            }
+        }
+
+        function mostrarAlerta(tipo, titulo, mensaje) {
+            const modal = document.getElementById('modalAlert');
+            const circulo = document.getElementById('modalIcono');
+            circulo.className = "icono-alerta " + (tipo === "success" ? "exito-color" : "error-color");
+            circulo.innerHTML = tipo === "success" ? "✓" : "!";
+            document.getElementById('modalTitulo').innerText = titulo;
+            document.getElementById('modalMensaje').innerText = mensaje;
+            modal.style.display = "flex";
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalAlert').style.display = "none";
+        }
+    </script>
+    <script src="boton_dashboard_universal.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="Es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro De Personal - Unermb</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="registro.css">
+    <style>
+        /* Estilos adicionales para asegurar el funcionamiento del botón de contraseña */
+        .contrasena-contenedor {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-password {
+            padding-right: 55px !important;
+        }
+
+        .btn-puntico-aro {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: 1.5px solid var(--cian-neon, #00e5ff);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+            z-index: 10;
+        }
+
+        .btn-puntico-aro:focus {
+            outline: none;
+        }
+
+        .puntito-centro {
+            width: 6px;
+            height: 6px;
+            background: var(--cian-neon, #00e5ff);
+            border-radius: 50%;
+            transition: all 0.25s;
+        }
+
+        /* Estado activado del botón (muestra contraseña) */
+        .btn-puntico-aro.activado {
+            background: var(--cian-neon, #00e5ff);
+            box-shadow: 0 0 15px var(--cian-neon, #00e5ff);
+        }
+
+        .btn-puntico-aro.activado .puntito-centro {
+            width: 10px;
+            height: 10px;
+            background: transparent;
+            border: 2px solid #000;
+        }
+
+        /* Indicador de fortaleza de contraseña */
+        .password-strength {
+            margin-top: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .strength-Debil {
+            color: #e74c3c !important;
+        }
+
+        .strength-Media {
+            color: #f39c12 !important;
+        }
+
+        .strength-Segura {
+            color: #2ecc71 !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Scripts de navegación y verificación -->
+    <script src="navbar_controller.js"></script>
+    <script>
+        // Verificar que el usuario sea encargado
+        fetch('verificar_sesion.php')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.autenticado || data.rol !== 'encargado') {
+                    alert('⚠️ Acceso denegado. Esta sección es solo para encargados.');
+                    window.location.href = 'dashboard_empleado.html';
+                }
+            });
+    </script>
+
+    <nav class="navbar-superior">
+        <div class="logo-nav-contenedor">
+            <div class="circulo-logo-nav">
+                <img src="logo barlt.jpeg" alt="Logo Unermb">
+            </div>
+        </div>
+        <div class="enlaces-contenedor">
+            <!-- Los enlaces se cargarán dinámicamente -->
+        </div>
+        <button id="themeToggle" class="btn-theme-toggle">
+            <span id="themeIcon">🌙</span> <span id="themeText">Modo Oscuro</span>
+        </button>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="contenedor-principal">
+            <div class="encabezado-cuadro">
+                <h2 class="titulo-registro">Registro De Personal</h2>
+                <p class="subtitulo">Sede La Vega | Alta En Sistema</p>
+            </div>
+
+            <form id="registroForm" novalidate>
+                <div class="grupo-input">
+                    <label class="label-pro">Nombres</label>
+                    <input type="text" id="nombres" name="nombres" class="input-pro" maxlength="30" required>
+                </div>
+
+                <div class="grupo-input">
+                    <label class="label-pro">Apellidos</label>
+                    <input type="text" id="apellidos" name="apellidos" class="input-pro" maxlength="30" required>
+                </div>
+
+                <div class="grupo-input">
+                    <label class="label-pro">Cédula De Identidad</label>
+                    <input type="text" id="cedula" name="cedula" class="input-pro" inputmode="numeric" maxlength="10"
+                        required>
+                </div>
+
+                <div class="grupo-input">
+                    <label class="label-pro">Cargo / Departamento</label>
+                    <select id="cargo" name="cargo" class="input-pro" required>
+                        <option value="" disabled selected>Seleccione...</option>
+                        <option value="Vigilante">Vigilante</option>
+                        <option value="Obrero">Obrero</option>
+                        <option value="Administrativo">Administrativo</option>
+                    </select>
+                </div>
+
+                <div class="grupo-input">
+                    <label class="label-pro">Correo Electrónico</label>
+                    <input type="email" id="correo" name="correo" class="input-pro" required>
+                </div>
+
+                <div class="grupo-input">
+                    <label class="label-pro">Usuario</label>
+                    <input type="text" id="usuario" name="usuario" class="input-pro" maxlength="30" required>
+                </div>
+
+                <div class="grupo-input">
+                    <label class="label-pro">Contraseña</label>
+                    <div class="contrasena-contenedor">
+                        <input type="password" id="contraseña" name="contraseña" class="input-pro input-password"
+                            maxlength="20" required>
+                        <button type="button" id="TogglePasswordBtn" class="btn-puntico-aro">
+                            <span class="puntito-centro"></span>
+                        </button>
+                    </div>
+                    <div id="passwordStrength" class="password-strength"></div>
+                </div>
+
+                <button type="submit" class="btn-guardar" id="btnEnviar">Guardar Registro</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalAlert" class="overlay-modal">
+        <div class="box-modal">
+            <div class="aro-blanco-alerta">
+                <div id="modalIcono" class="icono-alerta">!</div>
+            </div>
+            <h2 id="modalTitulo">Sistema Unermb</h2>
+            <p id="modalMensaje"></p>
+            <button class="btn-modal" onclick="cerrarModal()">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        // ---------- TEMA OSCURO/CLARO ----------
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+
+        function inicializarTema() {
+            const temaGuardado = localStorage.getItem('theme');
+            if (temaGuardado === 'light') {
+                document.body.classList.add('light-mode');
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Modo Claro';
+            } else {
+                document.body.classList.remove('light-mode');
+                themeIcon.innerText = '🌙';
+                themeText.innerText = 'Modo Oscuro';
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            if (document.body.classList.contains('light-mode')) {
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Modo Claro';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.innerText = '🌙';
+                themeText.innerText = 'Modo Oscuro';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // ========== FORTALEZA DE CONTRASEÑA ==========
+        function evaluarFortaleza(password) {
+            let nivel = 0;
+            if (password.length >= 8) nivel++;
+            if (/[a-z]/.test(password)) nivel++;
+            if (/[A-Z]/.test(password)) nivel++;
+            if (/\d/.test(password)) nivel++;
+            if (/[^A-Za-z0-9]/.test(password)) nivel++;
+
+            if (password.length < 8 || nivel < 3) return 'Debil';
+            if (nivel < 5) return 'Media';
+            return 'Segura';
+        }
+
+        const passwordField = document.getElementById('contraseña');
+        const strengthDiv = document.getElementById('passwordStrength');
+
+        function actualizarFortaleza() {
+            const valor = passwordField.value;
+            if (valor === '') {
+                strengthDiv.textContent = '';
+                strengthDiv.className = 'password-strength';
+                return;
+            }
+            const fortaleza = evaluarFortaleza(valor);
+            strengthDiv.textContent = 'Nivel: ' + fortaleza;
+            strengthDiv.className = 'password-strength strength-' + fortaleza;
+        }
+
+        if (passwordField) {
+            passwordField.addEventListener('input', actualizarFortaleza);
+        }
+
+        // ========== MOSTRAR/OCULTAR CONTRASEÑA ==========
+        const togglePasswordBtn = document.getElementById('TogglePasswordBtn');
+
+        function togglePassword() {
+            const passInput = document.getElementById('contraseña');
+
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                togglePasswordBtn.classList.add('activado');
+            } else {
+                passInput.type = 'password';
+                togglePasswordBtn.classList.remove('activado');
+            }
+        }
+
+        if (togglePasswordBtn) {
+            togglePasswordBtn.addEventListener('click', togglePassword);
+        }
+
+        // ---------- VALIDACIONES ----------
+        const form = document.getElementById('registroForm');
+        const modal = document.getElementById('modalAlert');
+        const btnEnviar = document.getElementById('btnEnviar');
+        const cedulaInput = document.getElementById('cedula');
+
+        function mostrarAlerta(tipo, tit, msg) {
+            const icono = document.getElementById('modalIcono');
+            icono.innerHTML = (tipo === "success" ? "✓" : "!");
+            icono.className = "icono-alerta " + (tipo === "success" ? "exito-color" : "error-color");
+            document.getElementById('modalTitulo').innerText = tit;
+            document.getElementById('modalMensaje').innerText = msg;
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModal() { modal.style.display = 'none'; }
+
+        function esEmailValido(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function tieneSentido(texto, minLength, maxLength) {
+            const limpio = texto.trim();
+            if (limpio.length < minLength || limpio.length > maxLength) return false;
+            const primerCar = limpio[0];
+            if (limpio.split('').every(c => c === primerCar)) return false;
+            const secuenciasBasura = [
+                "qwerty", "asdfgh", "zxcvbn", "123456", "abcdef",
+                "qwe", "asd", "zxc", "rty", "fgh", "vbn", "uiop",
+                "11111", "22222", "aaaaa", "bbbbb", "mmmmm", "nnnnn"
+            ];
+            const lower = limpio.toLowerCase();
+            for (let seq of secuenciasBasura) {
+                if (lower.includes(seq)) return false;
+            }
+            if (!/[aeiouáéíóúü]/i.test(limpio)) return false;
+            if (/(.)\1{4,}/.test(limpio)) return false;
+            return true;
+        }
+
+        function esNombreValido(nombre) {
+            if (!tieneSentido(nombre, 3, 30)) return false;
+            const soloLetras = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑü\s\.\'\-]+$/;
+            return soloLetras.test(nombre.trim());
+        }
+
+        function esCedulaValida(cedula) {
+            return /^\d{8}$/.test(cedula);
+        }
+
+        // Filtrar cédula en tiempo real
+        cedulaInput.addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 8) this.value = this.value.slice(0, 8);
+        });
+        cedulaInput.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length > 8) this.value = this.value.slice(0, 8);
+            }, 0);
+        });
+
+        // ---------- ENVÍO DEL FORMULARIO ----------
+        form.onsubmit = async function (e) {
+            e.preventDefault();
+            const nombres = document.getElementById('nombres').value.trim();
+            const apellidos = document.getElementById('apellidos').value.trim();
+            let cedula = document.getElementById('cedula').value.trim();
+            const cargo = document.getElementById('cargo').value;
+            const correo = document.getElementById('correo').value.trim();
+            const usuario = document.getElementById('usuario').value.trim();
+            const contraseña = document.getElementById('contraseña').value.trim();
+
+            if (!nombres || !apellidos || !cedula || !cargo || !correo || !usuario || !contraseña) {
+                mostrarAlerta("error", "Campos Vacíos", "Por favor, complete todos los campos.");
+                return;
+            }
+
+            if (!esNombreValido(nombres)) {
+                mostrarAlerta("error", "Nombre Inválido", "El nombre completo no es válido. Debe tener entre 3 y 30 caracteres, sin repeticiones absurdas.");
+                return;
+            }
+            if (!esNombreValido(apellidos)) {
+                mostrarAlerta("error", "Apellido Inválido", "El apellido completo no es válido. Debe tener entre 3 y 30 caracteres, sin repeticiones absurdas.");
+                return;
+            }
+            if (!esCedulaValida(cedula)) {
+                mostrarAlerta("error", "Cédula Inválida", "La cédula debe tener exactamente 8 dígitos numéricos.");
+                return;
+            }
+            if (!esEmailValido(correo)) {
+                mostrarAlerta("error", "Correo Inválido", "El correo electrónico no es correcto. Por favor ingrese una dirección válida (ejemplo: nombre@dominio.com).");
+                return;
+            }
+
+            const fortaleza = evaluarFortaleza(contraseña);
+            if (fortaleza !== 'Segura') {
+                mostrarAlerta("error", "Contraseña Débil", "La contraseña debe ser segura. Asegúrate de que tenga al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (ej: @, #, $, etc.).");
+                return;
+            }
+
+            btnEnviar.innerText = "Procesando...";
+            btnEnviar.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('nombres', nombres);
+                formData.append('apellidos', apellidos);
+                formData.append('cedula', cedula);
+                formData.append('cargo', cargo);
+                formData.append('correo', correo);
+                formData.append('usuario', usuario);
+                formData.append('contraseña', contraseña);
+
+                const response = await fetch('guardar_registro.php', { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.success) {
+                    mostrarAlerta("success", "Éxito", result.message);
+                    form.reset();
+                    const passInput = document.getElementById('contraseña');
+                    if (passInput) passInput.type = 'password';
+                    if (togglePasswordBtn) togglePasswordBtn.classList.remove('activado');
+                    if (strengthDiv) strengthDiv.textContent = '';
+                } else {
+                    mostrarAlerta("error", "Error", result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                mostrarAlerta("error", "Sistema", "Error De Conexión Con El Servidor.");
+            } finally {
+                btnEnviar.innerText = "Guardar Registro";
+                btnEnviar.disabled = false;
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', inicializarTema);
+    </script>
+
+    <!-- Botón flotante para volver al dashboard -->
+    <script src="boton_dashboard_universal.js"></script>
+
+</body>
+
+</html>

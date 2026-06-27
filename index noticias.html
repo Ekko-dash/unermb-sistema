@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias - Unermb</title>
+    <link rel="stylesheet" href="noticia.css">
+</head>
+
+<body>
+    <script src="navbar_controller.js"></script>
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="logo barlt.jpeg" alt="Logo">
+            </div>
+            <nav class="nav-links">
+                <!-- Los enlaces se cargarán dinámicamente -->
+            </nav>
+            <button id="themeToggle" class="btn-theme-toggle">
+                <span id="themeIcon">🌙</span> <span id="themeText">Modo Oscuro</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="wrapper">
+        <div class="branding-superior">
+            <div class="circulo-logo-branding">
+                <img src="logo barlt.jpeg">
+            </div>
+            <h2 class="branding-titulo">Noticias</h2>
+            <p class="subtitulo">Sede La Vega</p>
+        </div>
+
+        <div class="contenedor-principal">
+            <section class="seccion-carga">
+                <button id="btn-desplegar" class="btn-cyan-pro" onclick="mostrarFormulario()">Publicar Noticia</button>
+
+                <div id="formulario-noticia" style="display:none; margin-top:20px;">
+
+                    <label class="etiqueta-pro">Usuario de acceso</label>
+                    <input type="text" id="usuario" class="input-pro" maxlength="30">
+
+                    <label class="etiqueta-pro">Asunto De La Noticia</label>
+                    <input type="text" id="asunto" class="input-pro" maxlength="50">
+
+                    <label class="etiqueta-pro">Contenido De La Noticia</label>
+                    <textarea id="contenido" class="input-pro" rows="4" maxlength="500" style="resize:none;"></textarea>
+
+                    <div class="contrasena-contenedor">
+                        <label class="etiqueta-pro">Contraseña De Encargado</label>
+                        <input type="password" id="auth_pass" class="input-pro input-password" maxlength="20">
+                        <button type="button" id="TogglePasswordBtn" class="Btn-Ver-Password"
+                            onclick="togglePassword()">
+                            <span class="Puntito-Centro"></span>
+                        </button>
+                    </div>
+                    <div id="passwordStrength" class="password-strength"></div>
+
+                    <button class="btn-subir-neon" onclick="publicarNoticia()">Publicar Ahora</button>
+                    <button class="btn-cancelar" onclick="cancelarFormulario()">Cancelar</button>
+                </div>
+            </section>
+
+            <section class="seccion-visual">
+                <h3 class="header-reportes">Avisos Oficiales</h3>
+                <div id="lista-avisos"></div>
+            </section>
+        </div>
+    </main>
+
+    <div id="modalAlert" class="overlay-modal">
+        <div class="box-modal">
+            <div class="aro-blanco-alerta">
+                <div id="modalIcono" class="icono-alerta">!</div>
+            </div>
+            <h2 id="modalTitulo">Sistema</h2>
+            <p id="modalMensaje"></p>
+            <button class="btn-modal" onclick="cerrarModal()">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== TEMA OSCURO/CLARO ==========
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+
+        function inicializarTema() {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Modo Claro';
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            if (document.body.classList.contains('light-mode')) {
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Modo Claro';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.innerText = '🌙';
+                themeText.innerText = 'Modo Oscuro';
+                localStorage.removeItem('theme');
+            }
+        });
+
+        // ========== VALIDACIONES ==========
+        function tieneSentido(texto, minLength, maxLength) {
+            const limpio = texto.trim();
+            if (limpio.length < minLength || limpio.length > maxLength) return false;
+            const primerCar = limpio[0];
+            if (limpio.split('').every(c => c === primerCar)) return false;
+            const secuenciasBasura = [
+                "qwerty", "asdfgh", "zxcvbn", "123456", "abcdef",
+                "qwe", "asd", "zxc", "rty", "fgh", "vbn", "uiop",
+                "11111", "22222", "aaaaa", "bbbbb", "mmmmm", "nnnnn"
+            ];
+            const lower = limpio.toLowerCase();
+            for (let seq of secuenciasBasura) {
+                if (lower.includes(seq)) return false;
+            }
+            if (!/[aeiouáéíóúü]/i.test(limpio)) return false;
+            if (/(.)\1{4,}/.test(limpio)) return false;
+            return true;
+        }
+
+        function esUsuarioValido(usuario) {
+            if (!tieneSentido(usuario, 3, 30)) return false;
+            const soloLetras = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑü\s\.\'\-]+$/;
+            return soloLetras.test(usuario.trim());
+        }
+
+        // Asunto: mínimo 10, máximo 50 caracteres
+        function esAsuntoValido(asunto) {
+            return tieneSentido(asunto, 10, 50);
+        }
+
+        // Contenido: mínimo 10, máximo 500 caracteres (cambiado de 20 a 10)
+        function esContenidoValido(contenido) {
+            return tieneSentido(contenido, 10, 500);
+        }
+
+        function evaluarFortaleza(password) {
+            let nivel = 0;
+            if (password.length >= 8) nivel++;
+            if (/[a-z]/.test(password)) nivel++;
+            if (/[A-Z]/.test(password)) nivel++;
+            if (/\d/.test(password)) nivel++;
+            if (/[^A-Za-z0-9]/.test(password)) nivel++;
+            if (password.length < 8 || nivel < 3) return 'Débil';
+            if (nivel < 5) return 'Media';
+            return 'Segura';
+        }
+
+        function esPasswordValida(pass) {
+            return evaluarFortaleza(pass) === 'Segura';
+        }
+
+        const passInput = document.getElementById('auth_pass');
+        const strengthDiv = document.getElementById('passwordStrength');
+
+        function actualizarFortaleza() {
+            const valor = passInput.value;
+            if (valor === '') {
+                strengthDiv.textContent = '';
+                strengthDiv.className = 'password-strength';
+                return;
+            }
+            const fortaleza = evaluarFortaleza(valor);
+            strengthDiv.textContent = 'Nivel: ' + fortaleza;
+            strengthDiv.className = 'password-strength strength-' + fortaleza.toLowerCase();
+        }
+        if (passInput) passInput.addEventListener('input', actualizarFortaleza);
+
+        // ========== UI ==========
+        function togglePassword() {
+            const passInput = document.getElementById('auth_pass');
+            const btn = document.getElementById('TogglePasswordBtn');
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                btn.classList.add('Activado');
+            } else {
+                passInput.type = "password";
+                btn.classList.remove('Activado');
+            }
+        }
+
+        function mostrarFormulario() {
+            document.getElementById('formulario-noticia').style.display = 'block';
+            document.getElementById('btn-desplegar').style.display = 'none';
+        }
+
+        function cancelarFormulario() {
+            document.getElementById('formulario-noticia').style.display = 'none';
+            document.getElementById('btn-desplegar').style.display = 'block';
+            document.getElementById('usuario').value = '';
+            document.getElementById('asunto').value = '';
+            document.getElementById('contenido').value = '';
+            document.getElementById('auth_pass').value = '';
+            if (strengthDiv) strengthDiv.textContent = '';
+            const btn = document.getElementById('TogglePasswordBtn');
+            if (btn) btn.classList.remove('Activado');
+        }
+
+        async function publicarNoticia() {
+            const usuario = document.getElementById('usuario').value.trim();
+            const asunto = document.getElementById('asunto').value.trim();
+            const contenido = document.getElementById('contenido').value.trim();
+            const password = passInput.value;
+
+            if (!usuario || !asunto || !contenido || !password) {
+                mostrarAlerta("error", "Campos Vacíos", "Complete todos los campos.");
+                return;
+            }
+            if (!esUsuarioValido(usuario)) {
+                mostrarAlerta("error", "Usuario Inválido", "El usuario no es válido. Debe tener entre 3 y 30 caracteres, sin repeticiones absurdas.");
+                return;
+            }
+            if (!esAsuntoValido(asunto)) {
+                mostrarAlerta("error", "Asunto Inválido", "El asunto no es válido. Debe tener entre 10 y 50 caracteres, sin repeticiones absurdas.");
+                return;
+            }
+            if (!esContenidoValido(contenido)) {
+                mostrarAlerta("error", "Contenido Inválido", "El contenido no es válido. Debe tener entre 10 y 500 caracteres, sin repeticiones absurdas.");
+                return;
+            }
+            if (!esPasswordValida(password)) {
+                mostrarAlerta("error", "Contraseña Débil", "La contraseña debe ser segura. Asegúrate de que tenga al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (ej: @, #, $, etc.).");
+                return;
+            }
+
+            const fd = new FormData();
+            fd.append('usuario', usuario);
+            fd.append('asunto', asunto);
+            fd.append('noticia', contenido);
+            fd.append('password', password);
+
+            try {
+                const res = await fetch('guardar_noticia.php', { method: 'POST', body: fd });
+                const data = await res.json();
+                if (data.success) {
+                    mostrarAlerta("success", "Éxito", data.message);
+                    cancelarFormulario();
+                    cargarNoticias();
+                } else {
+                    mostrarAlerta("error", "Denegado", data.message);
+                }
+            } catch (e) {
+                mostrarAlerta("error", "Error", "No se conectó al servidor.");
+            }
+        }
+
+        async function cargarNoticias() {
+            const lista = document.getElementById('lista-avisos');
+            try {
+                const res = await fetch('obtener_noticias.php');
+                const data = await res.json();
+                lista.innerHTML = "";
+                if (data.length === 0) {
+                    lista.innerHTML = '<p class="texto-vacio">No hay noticias publicadas.</p>';
+                    return;
+                }
+                data.forEach(n => {
+                    const card = document.createElement('div');
+                    card.className = 'card-actividad';
+                    card.innerHTML = `
+                        <small style="color:var(--texto-gris); font-weight:900;">${n.fecha}</small><br>
+                        <strong class="card-responsable">${n.asunto}</strong>
+                        <p class="card-detalle">${n.noticia}</p>
+                    `;
+                    lista.appendChild(card);
+                });
+            } catch (e) {
+                console.error("Error al cargar noticias");
+                lista.innerHTML = '<p class="texto-error">Error al cargar noticias.</p>';
+            }
+        }
+
+        // ========== MODAL ==========
+        function mostrarAlerta(tipo, tit, msg) {
+            const modal = document.getElementById('modalAlert');
+            const icono = document.getElementById('modalIcono');
+            const mensajeElem = document.getElementById('modalMensaje');
+            document.getElementById('modalTitulo').innerText = tit;
+            mensajeElem.innerText = msg;
+
+            mensajeElem.classList.remove('error-mensaje', 'exito-mensaje');
+
+            if (tipo === "error") {
+                icono.classList.add("error-color");
+                icono.classList.remove("exito-color");
+                icono.innerText = "!";
+                mensajeElem.classList.add('error-mensaje');
+            } else {
+                icono.classList.add("exito-color");
+                icono.classList.remove("error-color");
+                icono.innerText = "✓";
+                mensajeElem.classList.add('exito-mensaje');
+            }
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalAlert').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarTema();
+            cargarNoticias();
+            actualizarFortaleza();
+        });
+    </script>
+    <script src="boton_dashboard_universal.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Empleado - Unermb</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #0d1b2a 0%, #050a0f 100%);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-dashboard {
+            background: #000;
+            padding: 15px 25px;
+            border-radius: 20px;
+            border-bottom: 3px solid #00e5ff;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #00e5ff;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .titulo-panel {
+            color: #00e5ff;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .info-usuario {
+            background: #161b22;
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .info-usuario span {
+            color: #00e5ff;
+        }
+
+        .grid-modulos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .modulo-card {
+            background: #161b22;
+            border-radius: 25px;
+            padding: 25px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            transition: 0.3s;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .modulo-card:hover {
+            transform: translateY(-5px);
+            border-color: #00e5ff;
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.2);
+        }
+
+        .modulo-icono {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .modulo-titulo {
+            color: #00e5ff;
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .modulo-desc {
+            color: #8b949e;
+            font-size: 12px;
+        }
+
+        .btn-cerrar-sesion {
+            background: transparent;
+            border: 2px solid #ff3d00;
+            color: #ff3d00;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-cerrar-sesion:hover {
+            background: #ff3d00;
+            color: white;
+        }
+
+        .footer-dashboard {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #8b949e;
+            font-size: 11px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .aviso-restriccion {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 61, 0, 0.1);
+            border-radius: 15px;
+            border-left: 4px solid #ff3d00;
+        }
+
+        .aviso-restriccion p {
+            color: #ff3d00;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="header-dashboard">
+            <div class="logo-area">
+                <div class="logo"><img src="logo barlt.jpeg" alt="Logo"></div>
+                <h1 class="titulo-panel">Panel Empleado</h1>
+            </div>
+            <div class="info-usuario">
+                👤 <span id="nombreUsuario"></span> | ⭐ Rol: <span id="rolUsuario">Empleado</span>
+            </div>
+            <button class="btn-cerrar-sesion" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+        </div>
+
+        <div class="grid-modulos">
+            <div class="modulo-card" onclick="irA('asistencia.index.html')">
+                <div class="modulo-icono">📋</div>
+                <div class="modulo-titulo">Firma de Asistencia</div>
+                <div class="modulo-desc">Registrar entrada/salida</div>
+            </div>
+            <div class="modulo-card" onclick="irA('index justificativo.html')">
+                <div class="modulo-icono">📄</div>
+                <div class="modulo-titulo">Justificativos</div>
+                <div class="modulo-desc">Subir comprobantes de faltas</div>
+            </div>
+            <div class="modulo-card" onclick="irA('index noticias.html')">
+                <div class="modulo-icono">📰</div>
+                <div class="modulo-titulo">Noticias</div>
+                <div class="modulo-desc">Ver noticias publicadas</div>
+            </div>
+            <div class="modulo-card" onclick="irA('index actividades personales.html')">
+                <div class="modulo-icono">🎯</div>
+                <div class="modulo-titulo">Actividades</div>
+                <div class="modulo-desc">Ver actividades publicadas</div>
+            </div>
+        </div>
+
+        <div class="aviso-restriccion">
+            <p>⚠️ Nota: Como empleado, solo tienes acceso a firma de asistencia, justificativos, noticias y actividades.
+            </p>
+            <p>Las funciones de registro, publicación y reportes están disponibles exclusivamente para encargados.</p>
+        </div>
+
+        <div class="footer-dashboard">
+            Sistema de Gestión Unermb - Sede La Vega © 2026
+        </div>
+    </div>
+
+    <script>
+        fetch('verificar_sesion.php')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.autenticado || data.rol !== 'empleado') {
+                    window.location.href = 'index.login.html';
+                } else {
+                    document.getElementById('nombreUsuario').textContent = data.nombre;
+                }
+            })
+            .catch(() => window.location.href = 'index.login.html');
+
+        function irA(url) {
+            window.location.href = url;
+        }
+
+        function cerrarSesion() {
+            fetch('cerrar_sesion.php')
+                .then(() => window.location.href = 'index.login.html');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,357 @@
+/* ==========================================================================
+   --- tabla.css (VERSIÓN FINAL COMPLETA - UNERMB 2026) ---
+   ========================================================================== */
+
+:root {
+    --bg-oscuro: #010409;
+    --tarjeta: #161b22;
+    --cian: #00e5ff;
+    --blanco: #ffffff;
+    --verde-exito: #00e676;
+    --rojo-error: #ff3d00;
+    --azul-unermb: #003366;
+    --texto-gris: #8b949e;
+}
+
+/* --- RESET Y BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at center, #0d1b2a 0%, var(--bg-oscuro) 100%);
+    color: var(--blanco);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s ease;
+}
+
+/* --- MODO CLARO (LÓGICA DE INVERSIÓN) --- */
+body.modo-claro {
+    background: #f0f2f5 !important;
+}
+
+/* Inversión de la tabla a modo oscuro cuando está en modo claro */
+body.modo-claro #area-reporte {
+    background: var(--tarjeta) !important;
+    border: 1px solid var(--cian) !important;
+    color: var(--blanco) !important;
+}
+
+body.modo-claro #area-reporte h2,
+body.modo-claro #area-reporte p,
+body.modo-claro .subtitulo-reporte {
+    color: var(--blanco) !important;
+}
+
+body.modo-claro .tabla-unermb th {
+    background: #0d1117 !important;
+    color: var(--cian) !important;
+}
+
+body.modo-claro .tabla-unermb td {
+    color: var(--blanco) !important;
+    border-bottom: 1px solid #30363d !important;
+}
+
+/* --- NAVBAR SUPERIOR (SE CONSERVA ORIGINAL) --- */
+.navbar-superior {
+    background: #000;
+    padding: 10px 20px;
+    border-bottom: 2px solid var(--cian);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.circulo-logo-nav {
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border-radius: 50%;
+    border: 2px solid var(--cian);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px var(--cian);
+    flex-shrink: 0;
+}
+
+.circulo-logo-nav img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.enlaces-contenedor {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.enlaces-contenedor a {
+    color: var(--blanco);
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 11px;
+    transition: 0.3s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+
+.enlaces-contenedor a.active {
+    color: var(--cian);
+    text-shadow: 0 0 10px var(--cian);
+}
+
+#btn-modo {
+    background: transparent;
+    border: 2px solid var(--cian);
+    color: var(--blanco);
+    padding: 8px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+/* --- PANEL DE CONFIGURACIÓN --- */
+.main-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    width: 100%;
+    flex: 1;
+}
+
+.panel-config-superior {
+    background: rgba(22, 27, 34, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 25px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    margin-bottom: 40px;
+}
+
+.config-grid {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.botones-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-accion {
+    padding: 15px 25px;
+    border-radius: 15px;
+    border: none;
+    font-weight: 900;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.3s;
+}
+
+.btn-pdf {
+    background: #fff;
+    color: #000;
+}
+
+/* --- ÁREA DEL REPORTE (ORIGINAL) --- */
+#area-reporte {
+    background: #ffffff;
+    border-radius: 35px;
+    padding: 50px;
+    color: #000000;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.header-principal {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-reporte-esferico {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid var(--cian);
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.header-principal h2 {
+    color: var(--azul-unermb);
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.subtitulo-reporte {
+    color: #666;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+}
+
+.linea-division {
+    height: 4px;
+    background: var(--cian);
+    width: 80px;
+    margin: 15px auto;
+    border-radius: 2px;
+}
+
+.tabla-unermb {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabla-unermb th {
+    background: #f4f7f9;
+    padding: 18px;
+    color: var(--azul-unermb);
+    border-bottom: 3px solid var(--cian);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.tabla-unermb td {
+    padding: 18px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    font-weight: 700;
+    color: #333;
+}
+
+/* --- MODAL Y ALERTAS CON ESTILO NEÓN --- */
+.overlay-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.box-modal {
+    background: rgba(22, 27, 34, 0.95);
+    padding: 45px 35px;
+    border-radius: 40px;
+    border: 2px solid var(--cian);
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+}
+
+.aro-blanco-alerta {
+    width: 100px;
+    height: 100px;
+    border: 5px solid #ffffff;
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icono-alerta {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 45px;
+    font-weight: 900;
+}
+
+.exito-color {
+    background: var(--verde-exito);
+    color: #000;
+    box-shadow: 0 0 20px var(--verde-exito);
+}
+
+.error-color {
+    background: var(--rojo-error);
+    color: #fff;
+    box-shadow: 0 0 20px var(--rojo-error);
+}
+
+.titulo-alerta {
+    color: var(--cian) !important;
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px var(--cian);
+}
+
+.texto-alerta {
+    color: var(--blanco);
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.btn-modal {
+    width: 100%;
+    padding: 18px;
+    background: var(--cian);
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--cian);
+    transition: 0.3s;
+}
+
+.btn-modal:hover {
+    box-shadow: 0 0 25px var(--cian);
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 600px) {
+    .navbar-superior {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .enlaces-contenedor {
+        font-size: 9px;
+    }
+
+    #area-reporte {
+        padding: 20px;
+    }
+
+    .tabla-unermb th,
+    .tabla-unermb td {
+        padding: 10px 5px;
+        font-size: 10px;
+    }
+}

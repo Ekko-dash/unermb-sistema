@@ -1,0 +1,596 @@
+/* =========================================
+   VARIABLES GLOBALES (estilo UNERMB)
+   ========================================= */
+:root {
+    --bg-oscuro: #050a0f;
+    --tarjeta: #161b22;
+    --cian-neon: #00e5ff;
+    --verde-exito: #00e676;
+    --rojo-error: #ff3d00;
+    --blanco: #ffffff;
+    --texto-gris: #8b949e;
+}
+
+/* --- RESET Y BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at center, #0d1b2a 0%, var(--bg-oscuro) 100%);
+    color: var(--blanco);
+    min-height: 100vh;
+    transition: background 0.3s ease;
+}
+
+/* --- MODO CLARO --- */
+body.modo-claro {
+    background: #f0f2f5;
+}
+
+body.modo-claro .card-actividad {
+    border: 1px solid #ddd;
+}
+
+body.modo-claro .input-pro {
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #000;
+}
+
+body.modo-claro .status-vivo {
+    color: #e74c3c;
+}
+
+/* ========== NAVBAR ========== */
+.navbar {
+    background: #000;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 2px solid var(--cian-neon);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    flex-wrap: wrap;
+}
+
+.circulo-logo-nav {
+    width: 55px;
+    height: 55px;
+    background: #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--cian-neon);
+    box-shadow: 0 0 12px var(--cian-neon);
+}
+
+.circulo-logo-nav img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    flex: 1;
+}
+
+.nav-links a {
+    color: var(--blanco);
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 12px;
+    white-space: nowrap;
+    padding: 6px 0;
+    transition: 0.2s;
+}
+
+.nav-links a.active {
+    color: var(--cian-neon);
+    text-shadow: 0 0 6px var(--cian-neon);
+}
+
+#btn-modo {
+    background: transparent;
+    border: 2px solid var(--cian-neon);
+    color: var(--blanco);
+    padding: 6px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+#btn-modo:hover {
+    background: var(--cian-neon);
+    color: #000;
+}
+
+/* ========== MAIN WRAPPER ========== */
+.wrapper {
+    padding: 40px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.contenedor-principal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+}
+
+/* ========== SECCIÓN DE CARGA (formulario) ========== */
+.seccion-carga {
+    flex: 1.2;
+    min-width: 320px;
+    background: var(--tarjeta);
+    border-radius: 35px;
+    padding: 30px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.branding {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.circulo-logo-branding {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 15px;
+    background: #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--cian-neon);
+}
+
+.circulo-logo-branding img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.branding h2 {
+    color: var(--cian-neon);
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.subtitulo {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* --- BOTÓN "NUEVA ACTIVIDAD" --- */
+.btn-cyan-pro {
+    width: 100%;
+    padding: 14px;
+    background: var(--cian-neon);
+    color: #000;
+    border: none;
+    border-radius: 40px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 15px;
+}
+
+.btn-cyan-pro:hover {
+    background: var(--blanco);
+    transform: translateY(-3px);
+}
+
+.btn-cyan-pro:active {
+    transform: translateY(2px);
+    background: #0099cc;
+}
+
+/* Formulario oculto */
+.form-oculto {
+    display: none;
+    margin-top: 25px;
+}
+
+.etiqueta-pro {
+    display: block;
+    color: var(--cian-neon);
+    font-weight: 900;
+    font-size: 12px;
+    margin: 15px 0 6px 6px;
+}
+
+/* ==================== INPUTS Y TEXTAREA ==================== */
+.input-pro,
+textarea.input-pro {
+    width: 100%;
+    padding: 14px;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background: #eef2f5;
+    font-weight: bold;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+    resize: vertical;
+}
+
+/* Eliminamos cualquier sombra externa al focus (pero mantenemos el borde interno si se desea) */
+.input-pro:focus,
+textarea.input-pro:focus {
+    border-color: transparent;
+    background: #fff;
+}
+
+body.modo-claro .input-pro,
+body.modo-claro textarea.input-pro {
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #000;
+}
+
+body.modo-claro .input-pro:focus,
+body.modo-claro textarea.input-pro:focus {
+    border-color: transparent;
+    background: #fff;
+}
+
+/* ============================================= */
+/* BOTÓN VER CONTRASEÑA (sin recuadros externos) */
+/* ============================================= */
+.contenedor-password {
+    position: relative;
+    width: 100%;
+}
+
+.contenedor-password .input-pro {
+    padding-right: 50px;
+}
+
+.btn-puntico-aro {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1.5px solid var(--cian-neon);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+}
+
+.btn-puntico-aro::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--cian-neon);
+    border-radius: 50%;
+    transition: all 0.25s;
+}
+
+.btn-puntico-aro:focus {
+    outline: none;
+}
+
+.btn-puntico-aro.activado {
+    background: var(--cian-neon);
+}
+
+.btn-puntico-aro.activado::after {
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border: 2px solid #000;
+}
+
+/* Indicador fortaleza contraseña (solo color texto) */
+.password-strength {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.strength-débil {
+    color: var(--rojo-error);
+}
+
+.strength-media {
+    color: #f39c12;
+}
+
+.strength-segura {
+    color: var(--verde-exito);
+}
+
+/* ============================================= */
+/* BOTÓN "PUBLICAR EN VIVO" (sin sombras extra) */
+/* ============================================= */
+.btn-subir-neon {
+    width: 100%;
+    padding: 14px;
+    background: var(--cian-neon);
+    color: #000;
+    font-weight: 900;
+    border: none;
+    border-radius: 40px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-subir-neon:hover {
+    background: var(--blanco);
+    transform: translateY(-3px);
+}
+
+.btn-subir-neon:active {
+    transform: translateY(2px);
+    background: #0099cc;
+}
+
+.btn-cancelar {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 2px solid #888;
+    border-radius: 40px;
+    margin-top: 12px;
+    color: var(--blanco);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-cancelar:hover {
+    background: #333;
+}
+
+/* ========== SECCIÓN VISUAL (reportes) ========== */
+.seccion-visual {
+    flex: 2;
+    min-width: 380px;
+    background: var(--tarjeta);
+    border-radius: 35px;
+    padding: 20px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+/* === TÍTULO "REPORTES" Y LÍNEA INFERIOR: AZUL NEÓN SÓLIDO === */
+.header-reportes {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid var(--cian-neon);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.header-reportes h3 {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--cian-neon);
+    text-shadow: none;
+}
+
+.status-vivo {
+    color: #2ecc71;
+    font-weight: bold;
+    font-size: 13px;
+    animation: parpadeo 1.5s infinite;
+}
+
+@keyframes parpadeo {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Modo claro: línea azul también */
+body.modo-claro .header-reportes {
+    border-bottom: 2px solid var(--cian-neon);
+}
+
+/* Mural de actividades */
+#mural-actividades {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.card-actividad {
+    background: #0f1219;
+    border-radius: 24px;
+    padding: 18px;
+    border-left: 6px solid var(--cian-neon);
+    transition: 0.2s;
+}
+
+body.modo-claro .card-actividad {
+    background: #ffffff;
+    border-left: 6px solid var(--cian-neon);
+}
+
+.card-actividad:hover {
+    transform: translateX(5px);
+}
+
+.card-header-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--texto-gris);
+    margin-bottom: 12px;
+}
+
+.card-responsable {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 8px;
+    color: var(--cian-neon);
+}
+
+.card-detalle {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #ddd;
+}
+
+body.modo-claro .card-detalle {
+    color: #222;
+}
+
+.texto-carga,
+.texto-vacio,
+.texto-error {
+    text-align: center;
+    padding: 40px;
+    font-weight: bold;
+}
+
+.texto-error {
+    color: var(--rojo-error);
+}
+
+/* ========== MODAL CON EFECTO DIFUMINADO (GLOW NEÓN) ========== */
+.overlay-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(12px);
+}
+
+.box-modal {
+    background: var(--tarjeta);
+    padding: 45px 35px;
+    border-radius: 40px;
+    border: 2px solid var(--cian-neon);
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 0 0 35px rgba(0, 229, 255, 0.4);
+    /* difuminado neón */
+}
+
+.aro-blanco-alerta {
+    width: 95px;
+    height: 95px;
+    border: 6px solid #ffffff;
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px var(--cian-neon), inset 0 0 10px var(--cian-neon);
+    /* glow */
+}
+
+.icono-alerta {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 38px;
+    font-weight: 900;
+}
+
+.exito-color {
+    background: var(--verde-exito);
+    color: #000;
+    box-shadow: 0 0 25px var(--verde-exito);
+    /* glow verde */
+}
+
+.error-color {
+    background: var(--rojo-error);
+    color: #fff;
+    box-shadow: 0 0 25px var(--rojo-error);
+    /* glow rojo */
+}
+
+#modalTitulo {
+    color: var(--cian-neon);
+    font-weight: 900;
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+#modalMensaje {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.btn-modal {
+    width: 100%;
+    padding: 16px;
+    background: var(--cian-neon);
+    color: #000;
+    border: none;
+    border-radius: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-modal:hover {
+    background: var(--blanco);
+    transform: translateY(-3px);
+}
+
+.btn-modal:active {
+    transform: translateY(2px);
+    background: #0099cc;
+}
+
+/* Scroll personalizado */
+#mural-actividades::-webkit-scrollbar {
+    width: 6px;
+}
+
+#mural-actividades::-webkit-scrollbar-track {
+    background: #1a1e2a;
+    border-radius: 10px;
+}
+
+#mural-actividades::-webkit-scrollbar-thumb {
+    background: var(--cian-neon);
+    border-radius: 10px;
+}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unermb - Gestión De Asistencia 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="tabla.css">
+</head>
+
+<body>
+    <script src="navbar_controller.js"></script>
+    <script>
+
+
+        // Verificar que el usuario sea encargado
+        fetch('verificar_sesion.php')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.autenticado || data.rol !== 'encargado') {
+                    alert('⚠️ Acceso denegado. Esta sección es solo para encargados.');
+                    window.location.href = 'dashboard_empleado.html';
+                }
+            });
+
+
+        // Verificar que el usuario sea encargado
+        fetch('verificar_sesion.php')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.autenticado || data.rol !== 'encargado') {
+                    alert('⚠️ Acceso denegado. Esta sección es solo para encargados.');
+                    window.location.href = 'dashboard_empleado.html';
+                }
+            });
+    </script>
+
+    <header class="navbar-superior">
+        <div class="circulo-logo-nav">
+            <img src="logo barlt.jpeg" alt="Logo Unermb">
+        </div>
+        <nav class="enlaces-contenedor">
+            <a href="index.registro.html">Registro</a>
+            <a href="index encargado.html">Registro De Encargado</a>
+            <a href="asistencia.index.html">Asistencia</a>
+            <a href="index actividades personales.html">Actividades</a>
+            <a href="index noticias.html">Noticias</a>
+            <a href="index justificativo.html">Justificativos</a>
+            <a href="index.login.html">Login</a>
+            <a href="index.tablas de asistencia.html" class="active">Tablas</a>
+        </nav>
+        <button id="btn-modo" onclick="alternarModo()">
+            <span id="icono-modo">🌙</span> <span id="texto-modo">Modo Oscuro</span>
+        </button>
+    </header>
+
+    <div class="main-wrapper">
+        <section class="panel-config-superior">
+            <div class="config-grid">
+                <div class="botones-group">
+                    <button type="button" class="btn-accion btn-pdf" onclick="capturarPdf()">📄 Descargar Pdf</button>
+                    <button type="button" class="btn-accion" onclick="recargarTabla()" style="background: #00e5ff;">🔄
+                        Refrescar Datos</button>
+                </div>
+            </div>
+        </section>
+
+        <div id="area-reporte">
+            <header class="header-principal">
+                <img src="logo barlt.jpeg" class="logo-reporte-esferico" alt="Logo">
+                <h2>Reporte General De Asistencia</h2>
+                <p class="subtitulo-reporte">Unermb - Sede La Vega - 2026</p>
+                <div class="linea-division"></div>
+                <p style="font-size: 11px; margin-top: 10px;" id="fechaActualizacion"></p>
+            </header>
+
+            <div style="overflow-x: auto;">
+                <table class="tabla-unermb">
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre Completo</th>
+                            <th>Cargo</th>
+                            <th>Fecha</th>
+                            <th>Hora Entrada</th>
+                            <th>Hora Salida</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTablaAsistencia">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px;">
+                                <span style="color: #00e5ff;">🔄 Cargando Datos Del Servidor...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAlerta" class="overlay-modal">
+        <div class="box-modal">
+            <div class="aro-blanco-alerta">
+                <div id="modalIcono" class="icono-alerta">✓</div>
+            </div>
+            <h3 id="modalTitulo" class="titulo-alerta">Sistema</h3>
+            <p id="modalMensaje" class="texto-alerta"></p>
+            <button class="btn-modal" onclick="cerrarModal()">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        let intervaloActualizacion = null;
+
+        function alternarModo() {
+            document.body.classList.toggle('modo-claro');
+            const EsModoClaro = document.body.classList.contains('modo-claro');
+            document.getElementById('icono-modo').innerText = EsModoClaro ? '☀️' : '🌙';
+            document.getElementById('texto-modo').innerText = EsModoClaro ? 'Modo Claro' : 'Modo Oscuro';
+            localStorage.setItem('theme', EsModoClaro ? 'light' : 'dark');
+        }
+
+        async function cargarDatosTabla() {
+            const Tbody = document.getElementById('cuerpoTablaAsistencia');
+            try {
+                // LÍNEA DE CONEXIÓN AL PHP EXTERNO
+                const Response = await fetch('obtener_tabla_asistencia.php');
+
+                const Data = await Response.json();
+                const Ahora = new Date();
+                document.getElementById('fechaActualizacion').innerHTML = `Última Actualización: ${Ahora.toLocaleDateString()} ${Ahora.toLocaleTimeString()}`;
+
+                if (!Data || Data.length === 0) {
+                    Tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px;"><span style="color: #ff9800;">📋 No Hay Registros De Asistencia Aún</span></td></tr>`;
+                    return;
+                }
+
+                Tbody.innerHTML = '';
+                Data.forEach(Registro => {
+                    const Row = Tbody.insertRow();
+                    let EstadoStyle = '';
+                    let EstadoTexto = '';
+
+                    switch (Registro.estado) {
+                        case 'COMPLETO': EstadoStyle = 'color: #00e676; font-weight: 900;'; EstadoTexto = '✅ Completo'; break;
+                        case 'SIN SALIDA': EstadoStyle = 'color: #ff9800; font-weight: 900;'; EstadoTexto = '⚠️ Sin Salida'; break;
+                        case 'INCOMPLETO': EstadoStyle = 'color: #ff3d00; font-weight: 900;'; EstadoTexto = '❌ Incompleto'; break;
+                        default: EstadoStyle = 'color: #8b949e;'; EstadoTexto = Registro.estado;
+                    }
+
+                    Row.innerHTML = `<td><strong>${Registro.cedula}</strong></td><td><strong>${Registro.nombre_completo}</strong><br><small style="color: #00e5ff; font-size: 10px;">${Registro.cargo}</small></td><td>${Registro.cargo}</td><td>${Registro.fecha}</td><td>${Registro.entrada}</td><td>${Registro.salida}</td><td style="${EstadoStyle}">${EstadoTexto}</td>`;
+                });
+            } catch (Error) {
+                Tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px;"><span style="color: #ff3d00;">❌ Error Al Conectar Con El Servidor.</span></td></tr>`;
+            }
+        }
+
+        async function capturarPdf() {
+            const { jsPDF } = window.jspdf;
+            const Area = document.getElementById('area-reporte');
+            mostrarAlerta("success", "Procesando", "Generando Documento Pdf...");
+            try {
+                const Canvas = await html2canvas(Area, { backgroundColor: "#ffffff", scale: 2 });
+                const ImgData = Canvas.toDataURL('image/png');
+                const Pdf = new jsPDF('p', 'mm', 'a4');
+                const PdfWidth = Pdf.internal.pageSize.getWidth();
+                const PdfHeight = (Canvas.height * PdfWidth) / Canvas.width;
+                Pdf.addImage(ImgData, 'PNG', 0, 0, PdfWidth, PdfHeight);
+                Pdf.save(`Reporte_Asistencia_${new Date().toLocaleDateString()}.pdf`);
+                mostrarAlerta("success", "Descarga Exitosa", "El Reporte Pdf Ha Sido Descargado.");
+            } catch (Error) {
+                mostrarAlerta("error", "Error", "No Se Pudo Generar El Pdf.");
+            }
+        }
+
+        function recargarTabla() {
+            cargarDatosTabla();
+            mostrarAlerta("success", "Datos Actualizados", "La Tabla Ha Sido Actualizada Correctamente.");
+        }
+
+        function mostrarAlerta(Tipo, Titulo, Mensaje) {
+            const Modal = document.getElementById('modalAlerta');
+            const Icono = document.getElementById('modalIcono');
+            Icono.className = "icono-alerta " + (Tipo === "success" ? "exito-color" : "error-color");
+            Icono.innerHTML = Tipo === "success" ? "✓" : "!";
+            document.getElementById('modalTitulo').innerText = Titulo;
+            document.getElementById('modalMensaje').innerText = Mensaje;
+            Modal.style.display = 'flex';
+            if (Tipo === 'success') setTimeout(cerrarModal, 3000);
+        }
+
+        function cerrarModal() { document.getElementById('modalAlerta').style.display = 'none'; }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('modo-claro');
+                document.getElementById('icono-modo').innerText = '☀️';
+                document.getElementById('texto-modo').innerText = 'Modo Claro';
+            }
+            cargarDatosTabla();
+            intervaloActualizacion = setInterval(cargarDatosTabla, 30000);
+        });
+    </script>
+    <script src="boton_dashboard_universal.js"></script>
+</body>
+
+</html>

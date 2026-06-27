@@ -1,0 +1,464 @@
+/* =========================================
+   login.css - UNERMB SISTEMA 2026
+   Versión completa con botón de contraseña e indicador de fortaleza
+   ========================================= */
+
+:root {
+    --gradiente-azul: linear-gradient(135deg, #02060a 0%, #003366 50%, #00d4ff 100%);
+    --cian: #00e5ff;
+    --blanco: #ffffff;
+    --negro-barra: #000000;
+    --verde-exito: #00e676;
+    --rojo-error: #ff3d00;
+    --tarjeta-bg: #ffffff;
+    --fondo-modal: #0b1118;
+}
+
+/* RESET GENERAL */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at center, #0d1b2a 0%, #010409 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: var(--blanco);
+    overflow-x: hidden;
+    transition: background 0.3s ease;
+}
+
+/* --- MODO CLARO (solo fondo) --- */
+body.modo-claro {
+    background: #f0f2f5 !important;
+}
+
+/* --- NAVBAR --- */
+.navbar-superior {
+    width: 100%;
+    background-color: var(--negro-barra);
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 2px solid var(--cian);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    gap: 20px;
+}
+
+.circulo-logo-nav {
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--cian);
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+}
+
+.circulo-logo-nav img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.enlaces-contenedor {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    align-items: center;
+    flex: 1;
+}
+
+.enlaces-contenedor::-webkit-scrollbar {
+    display: none;
+}
+
+.enlaces-contenedor a {
+    color: var(--blanco) !important;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 11px;
+    white-space: nowrap;
+    padding: 8px 4px;
+    letter-spacing: 0.8px;
+}
+
+.enlaces-contenedor a.active,
+.enlaces-contenedor a:hover {
+    color: var(--cian) !important;
+    text-shadow: 0 0 10px var(--cian);
+}
+
+#btn-modo {
+    background: transparent;
+    border: 2px solid var(--cian);
+    color: var(--blanco);
+    padding: 6px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+    margin-left: auto;
+}
+
+#btn-modo:hover {
+    background: var(--cian);
+    color: #000;
+}
+
+/* --- CONTENEDOR PRINCIPAL (login) --- */
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 110px 15px 40px;
+}
+
+.card-login {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    background: var(--tarjeta-bg);
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+}
+
+/* --- PANEL AZUL (lado izquierdo) --- */
+.panel-azul {
+    flex: 1;
+    background: var(--gradiente-azul);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.logo-box {
+    width: 140px;
+    height: 140px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 25px;
+    border: 3px solid var(--cian);
+    overflow: hidden;
+}
+
+.logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.titulo-unermb {
+    font-size: 3rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.badge-personal {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 15px;
+    border-radius: 40px;
+    font-size: 11px;
+    font-weight: 900;
+    margin-top: 15px;
+    color: var(--cian);
+}
+
+/* --- PANEL FORMULARIO (lado derecho) --- */
+.panel-form {
+    flex: 1.2;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--tarjeta-bg);
+}
+
+.instruccion {
+    margin-bottom: 35px;
+    font-weight: 900;
+    color: var(--cian);
+    font-size: 14px;
+    border-left: 5px solid var(--cian);
+    padding-left: 12px;
+    letter-spacing: 1px;
+}
+
+.etiqueta-login {
+    display: block;
+    color: #003366;
+    font-weight: 900;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 18px;
+    border: 2px solid #edf2f7;
+    border-radius: 18px;
+    outline: none;
+    font-size: 15px;
+    font-weight: 700;
+    color: #2d3748;
+    background: #f7fafc;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: var(--cian);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+/* --- COMPONENTES CONTRASEÑA (botón ver/ocultar) --- */
+.Wrapper-Password {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.Wrapper-Password input {
+    margin-bottom: 0;
+    padding-right: 50px;
+}
+
+.Btn-Ver-Password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1.5px solid var(--cian);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+    z-index: 10;
+}
+
+.Btn-Ver-Password:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--cian);
+}
+
+.Puntito-Centro {
+    width: 6px;
+    height: 6px;
+    background: var(--cian);
+    border-radius: 50%;
+    transition: all 0.25s;
+}
+
+.Btn-Ver-Password.Activado {
+    background: var(--cian);
+    box-shadow: 0 0 15px var(--cian);
+}
+
+.Btn-Ver-Password.Activado .Puntito-Centro {
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border: 2px solid #000;
+}
+
+/* --- INDICADOR DE FORTALEZA DE CONTRASEÑA 
+.password-strength {
+    margin-top: 5px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.strength-débil {
+    color: #e74c3c;
+}
+.strength-media {
+    color: #f39c12;
+}
+.strength-segura {
+    color: #2ecc71;
+}
+body.modo-claro .strength-débil {
+    color: #b91c1c;
+}
+body.modo-claro .strength-media {
+    color: #b45309;
+}
+body.modo-claro .strength-segura {
+    color: #15803d;
+} --- */
+
+/* --- BOTÓN INGRESAR --- */
+.btn-ingresar {
+    width: 100%;
+    padding: 20px;
+    border: none;
+    border-radius: 20px;
+    background: var(--gradiente-azul);
+    color: white;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.4s;
+    margin-top: 20px;
+}
+
+.btn-ingresar:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 229, 255, 0.6);
+    filter: brightness(1.05);
+}
+
+/* --- MODAL DE ALERTA (unificado) --- */
+.overlay-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(15px);
+}
+
+.box-modal {
+    background-color: var(--fondo-modal);
+    width: 85%;
+    max-width: 380px;
+    padding: 45px 35px;
+    border-radius: 40px;
+    border: 2px solid var(--cian);
+    text-align: center;
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.6), inset 0 0 15px rgba(0, 229, 255, 0.2);
+}
+
+.aro-blanco-alerta {
+    width: 95px;
+    height: 95px;
+    border: 4px solid var(--blanco);
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px var(--blanco);
+}
+
+.icono-alerta {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    font-weight: 900;
+}
+
+.exito-color {
+    background-color: var(--verde-exito);
+    color: #000;
+    box-shadow: 0 0 20px var(--verde-exito);
+}
+
+.error-color {
+    background-color: var(--rojo-error);
+    color: #fff;
+    box-shadow: 0 0 20px var(--rojo-error);
+}
+
+#tituloAlerta {
+    color: var(--cian);
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px var(--cian);
+}
+
+#mensajeAlerta {
+    color: var(--blanco);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+}
+
+.btn-modal {
+    background: var(--cian);
+    color: #000;
+    width: 100%;
+    padding: 18px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-modal:hover {
+    background: var(--blanco);
+    box-shadow: 0 0 25px var(--blanco);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .card-login {
+        flex-direction: column;
+    }
+
+    .panel-azul,
+    .panel-form {
+        padding: 40px 20px;
+    }
+
+    .titulo-unermb {
+        font-size: 2.2rem;
+    }
+}
+
+/* Scroll personalizado */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1e2a;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--cian);
+    border-radius: 10px;
+}

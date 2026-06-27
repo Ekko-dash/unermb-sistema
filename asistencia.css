@@ -1,0 +1,299 @@
+/* ==========================================================================
+   --- asistencia.css (ESTILO UNERMB 2026 - BLINDADO) ---
+   ========================================================================== */
+
+:root {
+    --bg-oscuro: #050a0f;
+    --tarjeta: #161b22;
+    --cian-neon: #00e5ff;
+    --verde-exito: #00e676;
+    --rojo-error: #ff3d00;
+    --blanco: #ffffff;
+    --texto-gris: #8b949e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at center, #0d1b2a 0%, var(--bg-oscuro) 100%);
+    color: var(--blanco);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: background 0.4s ease;
+}
+
+/* --- SOLO CAMBIA EL FONDO --- */
+body.modo-claro {
+    background: #eef2f5 !important;
+}
+
+/* --- NAVBAR --- */
+.navbar-superior {
+    background: #000;
+    padding: 10px 15px;
+    border-bottom: 2px solid var(--cian-neon);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.circulo-logo-nav {
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 2px solid var(--cian-neon);
+    flex-shrink: 0;
+}
+
+.circulo-logo-nav img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.enlaces-contenedor {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    align-items: center;
+}
+
+.enlaces-contenedor a {
+    color: var(--blanco);
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 11px;
+    padding: 8px 4px;
+    transition: 0.3s;
+}
+
+.enlaces-contenedor a.active {
+    color: var(--cian-neon);
+    text-shadow: 0 0 10px var(--cian-neon);
+}
+
+#btn-modo {
+    background: transparent;
+    border: 2px solid var(--cian-neon);
+    color: var(--blanco);
+    padding: 8px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 11px;
+    transition: 0.3s;
+}
+
+#btn-modo:hover {
+    background: var(--cian-neon);
+    color: #000;
+}
+
+/* --- GRID --- */
+.main-wrapper {
+    padding: 40px 20px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.grid-asistencia {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    width: 100%;
+    max-width: 1200px;
+    align-items: start;
+}
+
+.contenedor-principal {
+    background: var(--tarjeta);
+    border-radius: 35px;
+    padding: 35px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    text-align: center;
+}
+
+.titulo-registro {
+    color: var(--cian-neon);
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.subtitulo {
+    color: var(--blanco);
+    font-size: 11px;
+    font-weight: 900;
+    margin-bottom: 25px;
+}
+
+/* --- INPUTS --- */
+.grupo-input {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.label-pro {
+    display: block;
+    color: var(--cian-neon);
+    font-weight: 900;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+.input-pro {
+    width: 100%;
+    padding: 16px;
+    border-radius: 15px;
+    border: 2px solid transparent;
+    background: #ffffff;
+    color: #000000 !important;
+    font-weight: 900;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-pro:focus {
+    box-shadow: 0 0 15px var(--cian-neon);
+    border-color: var(--cian-neon);
+}
+
+.btn-guardar,
+.btn-modal {
+    width: 100%;
+    padding: 18px;
+    background: var(--cian-neon);
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.btn-guardar:hover,
+.btn-modal:hover {
+    background: var(--blanco);
+    box-shadow: 0 0 20px var(--cian-neon);
+    transform: translateY(-2px);
+}
+
+/* --- TABLA --- */
+.scroll-pro {
+    max-height: 450px;
+    overflow-y: auto;
+    margin-top: 10px;
+    padding-right: 5px;
+}
+
+.tabla-asistencia {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabla-asistencia th {
+    color: var(--cian-neon);
+    font-size: 11px;
+    padding: 12px;
+    border-bottom: 2px solid var(--cian-neon);
+}
+
+.tabla-asistencia td {
+    padding: 15px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 13px;
+    color: var(--blanco);
+}
+
+/* --- ALERTAS (MODAL) --- */
+.overlay-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(12px);
+}
+
+.box-modal {
+    background: var(--tarjeta);
+    padding: 45px 35px;
+    border-radius: 40px;
+    border: 2px solid var(--cian-neon);
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.4);
+}
+
+.aro-blanco-alerta {
+    width: 95px;
+    height: 95px;
+    border: 5px solid #ffffff;
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icono-alerta {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.exito-color {
+    background: var(--verde-exito);
+    color: #000;
+    box-shadow: 0 0 25px var(--verde-exito);
+}
+
+.error-color {
+    background: var(--rojo-error);
+    color: #fff;
+    box-shadow: 0 0 25px var(--rojo-error), 0 0 50px rgba(255, 61, 0, 0.5);
+}
+
+#modalTitulo {
+    color: var(--cian-neon);
+    text-shadow: 0 0 8px var(--cian-neon);
+    margin-bottom: 15px;
+}
+
+#modalMensaje {
+    color: var(--blanco);
+    margin-bottom: 25px;
+    font-weight: 700;
+    line-height: 1.4;
+}

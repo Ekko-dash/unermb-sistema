@@ -1,0 +1,327 @@
+/* --- justificativo.css - UNERMB DISEÑO FINAL CON GLOW NEÓN --- */
+:root {
+    --azul-fondo: #050a0f;
+    --tarjeta: #161b22;
+    --cian-neon: #00e5ff;
+    --negro-barra: #000000;
+    --rojo-error: #ff3d00;
+    --verde-exito: #00e676;
+    --blanco: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at center, #0d1b2a 0%, var(--azul-fondo) 100%);
+    min-height: 100vh;
+    color: white;
+    overflow-x: hidden;
+    transition: background 0.3s ease;
+}
+
+/* --- MODO CLARO (SOLO FONDO) --- */
+body.modo-claro {
+    background: #f0f2f5 !important;
+}
+
+/* --- NAVBAR SUPERIOR --- */
+.navbar-superior {
+    width: 100%;
+    background: var(--negro-barra);
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 2px solid var(--cian-neon);
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    gap: 20px;
+}
+
+.circulo-logo-nav {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 2px solid var(--cian-neon);
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+}
+
+.circulo-logo-nav img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.enlaces-contenedor {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    align-items: center;
+}
+
+.enlaces-contenedor::-webkit-scrollbar {
+    display: none;
+}
+
+.enlaces-contenedor a {
+    color: var(--blanco) !important;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 11px;
+    white-space: nowrap;
+    padding: 8px 4px;
+    letter-spacing: 0.8px;
+}
+
+.enlaces-contenedor a.active {
+    color: var(--cian-neon) !important;
+    text-shadow: 0 0 10px var(--cian-neon);
+}
+
+/* --- ESTILO BOTÓN MODO --- */
+#btn-modo {
+    background: transparent;
+    border: 2px solid var(--cian-neon);
+    color: var(--blanco);
+    padding: 8px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 11px;
+    margin-left: auto;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.2);
+}
+
+#btn-modo:hover {
+    background: var(--cian-neon);
+    color: var(--negro-barra);
+    box-shadow: 0 0 15px var(--cian-neon);
+}
+
+/* --- CUERPO Y TARJETA --- */
+.main-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 110px 20px 40px;
+}
+
+.main-card {
+    background: var(--tarjeta);
+    width: 100%;
+    max-width: 450px;
+    border-radius: 35px;
+    padding: 40px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+}
+
+.header-justificativo {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header-justificativo h3 {
+    color: var(--cian-neon);
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}
+
+.header-justificativo p {
+    color: var(--blanco);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    opacity: 0.9;
+}
+
+/* --- ETIQUETAS Y ENTRADAS --- */
+.etiqueta-pro {
+    display: block;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--cian-neon);
+    margin-bottom: 8px;
+    margin-left: 5px;
+    letter-spacing: 1px;
+}
+
+.input-pro {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    background: #e6edf3;
+    color: #000;
+    font-weight: 700;
+    border: 2px solid transparent;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-pro:focus {
+    box-shadow: 0 0 15px var(--cian-neon);
+    background: #fff;
+    border-color: var(--cian-neon);
+}
+
+/* --- ARCHIVO Y BOTONES --- */
+input[type="file"] {
+    display: none;
+}
+
+.btn-archivo-estilo {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: 2px dashed var(--cian-neon);
+    color: var(--cian-neon);
+    border-radius: 15px;
+    text-align: center;
+    font-weight: 900;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.file-name-display {
+    color: var(--blanco);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 900;
+    margin: 10px 0 20px;
+    opacity: 0.8;
+}
+
+.btn-principal {
+    width: 100%;
+    padding: 18px;
+    background: var(--cian-neon);
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.btn-principal:hover {
+    background: var(--blanco);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 229, 255, 0.6);
+}
+
+/* --- MODAL ALERTA (CORREGIDO: tamaño de texto unificado a 13px) --- */
+.overlay-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(12px);
+}
+
+.box-modal {
+    background: var(--tarjeta);
+    padding: 45px 35px;
+    border-radius: 40px;
+    border: 2px solid var(--cian-neon);
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 0 0 35px rgba(0, 229, 255, 0.4);
+}
+
+.aro-blanco-alerta {
+    width: 95px;
+    height: 95px;
+    border: 4px solid var(--blanco);
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icono-alerta {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 42px;
+    font-weight: 900;
+}
+
+.exito-color {
+    background: var(--verde-exito);
+    color: #000;
+    box-shadow: 0 0 20px var(--verde-exito);
+}
+
+.error-color {
+    background: var(--rojo-error);
+    color: #fff;
+    box-shadow: 0 0 20px var(--rojo-error);
+}
+
+#modalTitulo {
+    color: var(--cian-neon);
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px var(--cian-neon);
+}
+
+/* ===== TEXTO DEL MODAL: TAMAÑO UNIFICADO 13px, NEGRITA ===== */
+#modalMensaje {
+    color: var(--blanco);
+    font-size: 13px;
+    /* ← ANTES ERA 11px, AHORA 13px */
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+    /* igual que en otros módulos */
+}
+
+.btn-modal {
+    width: 100%;
+    padding: 18px;
+    background: var(--cian-neon);
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-modal:hover {
+    background: var(--blanco);
+    box-shadow: 0 0 20px var(--blanco);
+    transform: scale(1.05);
+}

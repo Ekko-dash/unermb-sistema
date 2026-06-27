@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Justificativos - Unermb</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="justificativo.css">
+</head>
+
+<body>
+    <script src="navbar_controller.js"></script>
+    <nav class="navbar-superior">
+        <div class="circulo-logo-nav"><img src="logo barlt.jpeg" alt="Logo"></div>
+        <div class="enlaces-contenedor">
+            <!-- Los enlaces se cargarán dinámicamente -->
+        </div>
+        <button id="btn-modo" onclick="alternarModo()">
+            <span id="icono-modo">🌙</span> <span id="texto-modo">Modo Oscuro</span>
+        </button>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="main-card">
+            <div class="header-justificativo">
+                <h3>Justificativos</h3>
+                <p>Sede La Vega - Control De Faltas</p>
+            </div>
+
+            <form id="form-justificativo" enctype="multipart/form-data" novalidate>
+                <label class="etiqueta-pro">Nombre Y Apellido Completo</label>
+                <input type="text" name="nombre" id="nombre" class="input-pro" maxlength="30" required>
+
+                <label class="etiqueta-pro">Número De Cédula</label>
+                <input type="text" name="cedula" id="cedula" class="input-pro" maxlength="10" inputmode="numeric"
+                    required>
+
+                <label class="etiqueta-pro">Comprobante Médico / Foto</label>
+                <label for="foto_justificativo" class="btn-archivo-estilo">Buscar Archivo</label>
+                <input type="file" id="foto_justificativo" name="foto_justificativo" accept="image/*">
+                <div id="file-name" class="file-name-display">Ningún Archivo Seleccionado</div>
+
+                <label class="etiqueta-pro">Motivo De Su Falta</label>
+                <textarea name="mensaje" id="mensaje" class="input-pro area-pro" rows="5" maxlength="500"
+                    required></textarea>
+
+                <button type="submit" class="btn-principal" id="btnEnviar">Enviar Justificativo</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalAlert" class="overlay-modal">
+        <div class="box-modal">
+            <div class="aro-blanco-alerta">
+                <div id="modalIcono" class="icono-alerta">!</div>
+            </div>
+            <h2 id="modalTitulo">Sistema</h2>
+            <p id="modalMensaje"></p>
+            <button class="btn-modal" onclick="cerrarModal()">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        // ---------- MODO OSCURO/CLARO ----------
+        function alternarModo() {
+            document.body.classList.toggle('modo-claro');
+            const esModoClaro = document.body.classList.contains('modo-claro');
+            document.getElementById('icono-modo').innerText = esModoClaro ? '☀️' : '🌙';
+            document.getElementById('texto-modo').innerText = esModoClaro ? 'Modo Claro' : 'Modo Oscuro';
+            localStorage.setItem('theme', esModoClaro ? 'light' : 'dark');
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('modo-claro');
+                document.getElementById('icono-modo').innerText = '☀️';
+                document.getElementById('texto-modo').innerText = 'Modo Claro';
+            }
+            const fileInput = document.getElementById('foto_justificativo');
+            fileInput.onchange = function () {
+                document.getElementById('file-name').innerHTML = this.files.length > 0 ? "✅ " + this.files[0].name : "Ningún Archivo Seleccionado";
+            };
+        };
+
+        // ========== VALIDACIONES ROBUSTAS ==========
+        function tieneSentido(texto, minLength, maxLength) {
+            const limpio = texto.trim();
+            if (limpio.length < minLength || limpio.length > maxLength) return false;
+            const primerCar = limpio[0];
+            if (limpio.split('').every(c => c === primerCar)) return false;
+            const secuenciasBasura = [
+                "qwerty", "asdfgh", "zxcvbn", "123456", "abcdef",
+                "qwe", "asd", "zxc", "rty", "fgh", "vbn", "uiop",
+                "11111", "22222", "aaaaa", "bbbbb", "mmmmm", "nnnnn"
+            ];
+            const lower = limpio.toLowerCase();
+            for (let seq of secuenciasBasura) {
+                if (lower.includes(seq)) return false;
+            }
+            if (!/[aeiouáéíóúü]/i.test(limpio)) return false;
+            if (/(.)\1{4,}/.test(limpio)) return false;
+            return true;
+        }
+
+        function esNombreValido(nombre) {
+            if (!tieneSentido(nombre, 3, 30)) return false;
+            const soloLetras = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑü\s\.\'\-]+$/;
+            return soloLetras.test(nombre.trim());
+        }
+
+        function esCedulaValida(cedula) {
+            return /^\d{8}$/.test(cedula);
+        }
+
+        function esMotivoValido(motivo) {
+            return tieneSentido(motivo, 10, 500);
+        }
+
+        // ---------- MODAL ----------
+        function mostrarAlerta(tipo, tit, msg) {
+            const modal = document.getElementById('modalAlert');
+            const icono = document.getElementById('modalIcono');
+            document.getElementById('modalTitulo').innerText = tit;
+            document.getElementById('modalMensaje').innerText = msg;
+
+            icono.classList.remove("error-color", "exito-color");
+            if (tipo === "error") {
+                icono.classList.add("error-color");
+                icono.innerText = "!";
+            } else {
+                icono.classList.add("exito-color");
+                icono.innerText = "✓";
+            }
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalAlert').style.display = 'none';
+        }
+
+        // ---------- FILTRAR CÉDULA ----------
+        const cedulaInput = document.getElementById('cedula');
+        cedulaInput.addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 8) this.value = this.value.slice(0, 8);
+        });
+        cedulaInput.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length > 8) this.value = this.value.slice(0, 8);
+            }, 0);
+        });
+
+        // ---------- ENVÍO DEL FORMULARIO (mensajes completos, excepto el de formatos) ----------
+        document.getElementById('form-justificativo').onsubmit = async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnEnviar');
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const cedula = document.getElementById('cedula').value.trim();
+            const mensaje = document.getElementById('mensaje').value.trim();
+            const archivo = document.getElementById('foto_justificativo').files[0];
+
+            if (!nombre || !cedula || !mensaje) {
+                mostrarAlerta("error", "Campos Vacíos", "Por favor, complete todos los campos.");
+                return;
+            }
+            if (!archivo) {
+                mostrarAlerta("error", "Archivo Requerido", "Debe seleccionar un comprobante.");
+                return;
+            }
+
+            // Validar tipo de archivo (sin enumerar formatos)
+            const tiposPermitidos = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+            if (!tiposPermitidos.includes(archivo.type)) {
+                mostrarAlerta("error", "Formato No Válido", "El archivo no es una imagen válida.");
+                return;
+            }
+            // Validar tamaño
+            if (archivo.size > 5 * 1024 * 1024) {
+                mostrarAlerta("error", "Archivo Muy Grande", "El tamaño máximo es 5 MB.");
+                return;
+            }
+
+            // Validar nombre
+            if (!esNombreValido(nombre)) {
+                mostrarAlerta("error", "Nombre Inválido", "El nombre completo no es válido. Debe tener entre 3 y 30 caracteres, sin repeticiones absurdas.");
+                return;
+            }
+            // Validar cédula
+            if (!esCedulaValida(cedula)) {
+                mostrarAlerta("error", "Cédula Inválida", "La cédula debe tener exactamente 8 dígitos numéricos.");
+                return;
+            }
+            // Validar motivo
+            if (!esMotivoValido(mensaje)) {
+                mostrarAlerta("error", "Motivo Inválido", "El motivo no es válido. Debe tener entre 10 y 500 caracteres, sin repeticiones absurdas.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Enviando...";
+
+            const formData = new FormData(this);
+            try {
+                const response = await fetch('guardar_justificativo.php', { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.success) {
+                    mostrarAlerta("success", "Éxito", result.message);
+                    this.reset();
+                    document.getElementById('file-name').innerHTML = "Ningún Archivo Seleccionado";
+                } else {
+                    mostrarAlerta("error", "Error", result.message);
+                }
+            } catch (error) {
+                mostrarAlerta("error", "Error De Conexión", "No se pudo conectar con el servidor.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Enviar Justificativo";
+            }
+        };
+    </script>
+    <script src="boton_dashboard_universal.js"></script>
+</body>
+
+</html>

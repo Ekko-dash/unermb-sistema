@@ -1,0 +1,427 @@
+/* =========================================
+   VARIABLES DE MARCA (UNERMB 2026)
+   ========================================= */
+:root {
+    --bg-oscuro: #050a0f;
+    --tarjeta: #161b22;
+    --cian-neon: #00e5ff;
+    --verde-exito: #00e676;
+    --rojo-error: #ff3d00;
+    --blanco: #ffffff;
+    --texto-gris: #8b949e;
+}
+
+/* --- RESET Y BASE --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at center, #0d1b2a 0%, var(--bg-oscuro) 100%);
+    color: var(--blanco);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: background 0.3s ease;
+}
+
+/* --- ADAPTACIÓN MODO CLARO (Solo cambia el fondo) --- */
+body.Light-Mode {
+    background: #f0f2f5;
+}
+
+/* --- NAVBAR SUPERIOR --- */
+.Navbar-Superior {
+    background: #000;
+    padding: 10px 15px;
+    border-bottom: 2px solid var(--cian-neon);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.Logo-Nav-Contenedor {
+    display: flex;
+    align-items: center;
+}
+
+.Circulo-Logo-Nav {
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 2px solid var(--cian-neon);
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+}
+
+.Circulo-Logo-Nav img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Enlaces-Contenedor {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.Enlaces-Contenedor::-webkit-scrollbar {
+    display: none;
+}
+
+.Enlaces-Contenedor a {
+    color: var(--blanco);
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 11px;
+    white-space: nowrap;
+    padding: 8px 4px;
+    letter-spacing: 0.8px;
+}
+
+.Enlaces-Contenedor a.Active {
+    color: var(--cian-neon);
+    text-shadow: 0 0 10px var(--cian-neon);
+}
+
+/* --- BOTÓN TEMA --- */
+.Btn-Theme-Toggle {
+    background: transparent;
+    border: 2px solid var(--cian-neon);
+    color: var(--blanco);
+    padding: 8px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+    margin-left: auto;
+}
+
+.Btn-Theme-Toggle:hover {
+    background: var(--cian-neon);
+    color: #000;
+    box-shadow: 0 0 12px var(--cian-neon);
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.Main-Wrapper {
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.Contenedor-Principal {
+    background: var(--tarjeta);
+    border-radius: 35px;
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+    text-align: center;
+}
+
+.Circulo-Emblema {
+    width: 110px;
+    height: 110px;
+    background: #fff;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 4px solid var(--cian-neon);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+}
+
+.Circulo-Emblema img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Titulo-Registro {
+    color: var(--cian-neon);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}
+
+.Subtitulo {
+    color: var(--blanco);
+    font-size: 11px;
+    font-weight: 900;
+    margin-bottom: 30px;
+    letter-spacing: 1.8px;
+    opacity: 0.9;
+}
+
+/* --- FORMULARIO --- */
+.Grupo-Input {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.Label-Pro {
+    display: block;
+    color: var(--cian-neon);
+    font-weight: 900;
+    font-size: 11px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    letter-spacing: 1px;
+}
+
+/* ============================================= */
+/* INPUTS Y TEXTAREA - MEJORA: BORDE INTERNO SIN ESPACIO BLANCO */
+/* ============================================= */
+.Input-Pro,
+textarea.Input-Pro {
+    width: 100%;
+    padding: 14px;
+    border-radius: 15px;
+    border: 2px solid transparent;
+    /* borde siempre transparente para evitar bordes externos */
+    background: #e6edf3;
+    color: #000;
+    font-weight: 700;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+/* Foco: solo borde interno (inset) + resplandor, nada de border-color externo */
+.Input-Pro:focus,
+textarea.Input-Pro:focus {
+    border-color: transparent;
+    /* anula cualquier cambio de color externo */
+    background: #fff;
+    box-shadow: inset 0 0 0 2px var(--cian-neon),
+        /* borde interno 2px */
+        0 0 15px var(--cian-neon);
+    /* resplandor externo */
+}
+
+/* Modo claro: reposo con borde gris suave */
+body.Light-Mode .Input-Pro,
+body.Light-Mode textarea.Input-Pro {
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+}
+
+/* Modo claro: en foco también sin borde externo */
+body.Light-Mode .Input-Pro:focus,
+body.Light-Mode textarea.Input-Pro:focus {
+    border-color: transparent;
+    background: #fff;
+    box-shadow: inset 0 0 0 2px var(--cian-neon),
+        0 0 15px var(--cian-neon);
+}
+
+/* --- COMPONENTES CONTRASEÑA (botón ver/ocultar) --- */
+.Wrapper-Password {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.Btn-Ver-Password {
+    position: absolute;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1.5px solid var(--cian-neon);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+}
+
+.Btn-Ver-Password:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--cian-neon);
+}
+
+.Puntito-Centro {
+    width: 6px;
+    height: 6px;
+    background: var(--cian-neon);
+    border-radius: 50%;
+    transition: all 0.25s;
+}
+
+.Btn-Ver-Password.Activado {
+    background: var(--cian-neon);
+    box-shadow: 0 0 15px var(--cian-neon);
+}
+
+.Btn-Ver-Password.Activado .Puntito-Centro {
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border: 2px solid #000;
+}
+
+/* --- INDICADOR FORTALEZA CONTRASEÑA --- */
+.Password-Strength {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.Strength-Débil {
+    color: #e74c3c;
+}
+
+.Strength-Media {
+    color: #f39c12;
+}
+
+.Strength-Segura {
+    color: #2ecc71;
+}
+
+/* --- BOTÓN GUARDAR CON EFECTO ACTIVE (cambio de color al presionar) --- */
+.Btn-Guardar {
+    width: 100%;
+    padding: 18px;
+    background: var(--cian-neon);
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.4s;
+    margin-top: 10px;
+}
+
+.Btn-Guardar:hover {
+    background: var(--blanco);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 229, 255, 0.6);
+}
+
+.Btn-Guardar:active {
+    transform: translateY(2px);
+    background: #0099cc;
+    box-shadow: 0 2px 10px rgba(0, 229, 255, 0.8);
+}
+
+/* --- MODAL (CONFIGURACIÓN 2026) --- */
+.Overlay-Modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(12px);
+}
+
+.Box-Modal {
+    background: var(--tarjeta);
+    padding: 45px 35px;
+    border-radius: 40px;
+    border: 2px solid var(--cian-neon);
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 0 0 35px rgba(0, 229, 255, 0.4);
+    text-transform: capitalize;
+}
+
+.Aro-Blanco-Alerta {
+    width: 95px;
+    height: 95px;
+    border: 6px solid #ffffff;
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px var(--cian-neon), inset 0 0 10px var(--cian-neon);
+}
+
+.Icono-Alerta {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 38px;
+    font-weight: 900;
+}
+
+.Exito-Color {
+    background: var(--verde-exito);
+    color: #000;
+    box-shadow: 0 0 25px var(--verde-exito);
+}
+
+.Error-Color {
+    background: var(--rojo-error);
+    color: #fff;
+    box-shadow: 0 0 25px var(--rojo-error);
+}
+
+#modalTitulo {
+    color: var(--cian-neon);
+    font-weight: 900;
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+#modalMensaje {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+}
+
+.Btn-Modal {
+    width: 100%;
+    padding: 16px;
+    background: var(--cian-neon);
+    color: #000000;
+    border: none;
+    border-radius: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.Btn-Modal:hover {
+    background: #ffffff;
+}

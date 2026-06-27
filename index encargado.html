@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="Es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro De Encargados - Unermb</title>
+    <link rel="stylesheet" href="encargado.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+
+
+</html>
+<script>
+
+    // Verificar que el usuario sea encargado
+    fetch('verificar_sesion.php')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.autenticado || data.rol !== 'encargado') {
+                alert('⚠️ Acceso denegado. Esta sección es solo para encargados.');
+                window.location.href = 'dashboard_empleado.html';
+            }
+        });
+
+
+    // Verificar que el usuario sea encargado
+    fetch('verificar_sesion.php')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.autenticado || data.rol !== 'encargado') {
+                alert('⚠️ Acceso denegado. Esta sección es solo para encargados.');
+                window.location.href = 'dashboard_empleado.html';
+            }
+        });
+</script>
+
+<nav class="Navbar-Superior">
+    <div class="Logo-Nav-Contenedor">
+        <div class="Circulo-Logo-Nav">
+            <img src="logo barlt.jpeg" alt="Logo Unermb">
+        </div>
+    </div>
+    <div class="Enlaces-Contenedor">
+        <a href="index.registro.html">Registro</a>
+        <a href="index encargado.html" class="Active">Registro De Encargado</a>
+        <a href="asistencia.index.html">Asistencia</a>
+        <a href="index actividades personales.html">Actividades</a>
+        <a href="index noticias.html">Noticias</a>
+        <a href="index justificativo.html">Justificativos</a>
+        <a href="index.login.html">Login</a>
+    </div>
+
+    <button id="ThemeToggle" class="Btn-Theme-Toggle">
+        <span id="ThemeIcon">🌙</span> <span id="ThemeText">Modo Oscuro</span>
+    </button>
+</nav>
+
+<div class="Main-Wrapper">
+    <div class="Contenedor-Principal">
+        <div class="Lado-Informativo">
+            <div class="Circulo-Emblema">
+                <img src="logo barlt.jpeg" alt="Emblema Unermb">
+            </div>
+            <h2 class="Titulo-Registro">Gestión De Encargados</h2>
+            <p class="Subtitulo">Sede La Vega</p>
+        </div>
+
+        <div class="Lado-Formulario">
+            <form id="FormEncargado" novalidate>
+                <div class="Grupo-Input">
+                    <label class="Label-Pro">Nombre Completo</label>
+                    <input type="text" name="nombre" id="nombre" class="Input-Pro" maxlength="30" required>
+                </div>
+                <div class="Grupo-Input">
+                    <label class="Label-Pro">Cédula De Identidad</label>
+                    <input type="text" name="cedula" id="cedula" class="Input-Pro" inputmode="numeric" maxlength="10"
+                        required>
+                </div>
+                <div class="Grupo-Input">
+                    <label class="Label-Pro">Correo Electrónico</label>
+                    <input type="email" name="correo" id="correo" class="Input-Pro" required>
+                </div>
+                <div class="Grupo-Input">
+                    <label class="Label-Pro">Usuario De Sistema</label>
+                    <input type="text" name="usuario" id="usuario" class="Input-Pro" required>
+                </div>
+                <div class="Grupo-Input">
+                    <label class="Label-Pro">Contraseña</label>
+                    <div class="Wrapper-Password">
+                        <input type="password" name="password" id="password" class="Input-Pro" required maxlength="20">
+                        <button type="button" id="TogglePasswordBtn" class="Btn-Ver-Password">
+                            <span class="Puntito-Centro"></span>
+                        </button>
+                    </div>
+                    <div id="PasswordStrength" class="Password-Strength"></div>
+                </div>
+                <button type="submit" class="Btn-Guardar">Activar Encargado</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de alerta -->
+<div id="ModalAlerta" class="Overlay-Modal">
+    <div class="Box-Modal">
+        <div class="Aro-Blanco-Alerta">
+            <div id="ModalIcono" class="Icono-Alerta">!</div>
+        </div>
+        <h2 id="modalTitulo">Sistema</h2>
+        <p id="modalMensaje"></p>
+        <button type="button" class="Btn-Modal" id="BtnCerrar">Entendido</button>
+    </div>
+</div>
+
+<script>
+    // ---------- TEMA OSCURO/CLARO ----------
+    const ThemeToggleBtn = document.getElementById('ThemeToggle');
+    const ThemeIcon = document.getElementById('ThemeIcon');
+    const ThemeText = document.getElementById('ThemeText');
+
+    function InicializarTema() {
+        const TemaGuardado = localStorage.getItem('theme');
+        if (TemaGuardado === 'light') {
+            document.body.classList.add('Light-Mode');
+            ThemeIcon.innerText = '☀️';
+            ThemeText.innerText = 'Modo Claro';
+        } else {
+            document.body.classList.remove('Light-Mode');
+            ThemeIcon.innerText = '🌙';
+            ThemeText.innerText = 'Modo Oscuro';
+        }
+    }
+
+    ThemeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('Light-Mode');
+        if (document.body.classList.contains('Light-Mode')) {
+            ThemeIcon.innerText = '☀️';
+            ThemeText.innerText = 'Modo Claro';
+            localStorage.setItem('theme', 'light');
+        } else {
+            ThemeIcon.innerText = '🌙';
+            ThemeText.innerText = 'Modo Oscuro';
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+
+    // ========== VALIDACIÓN DE "SENTIDO" (idéntica a actividades y registro personal) ==========
+    function tieneSentido(texto, minLength, maxLength) {
+        const limpio = texto.trim();
+        if (limpio.length < minLength || limpio.length > maxLength) return false;
+        const primerCar = limpio[0];
+        if (limpio.split('').every(c => c === primerCar)) return false;
+        const secuenciasBasura = [
+            "qwerty", "asdfgh", "zxcvbn", "123456", "abcdef",
+            "qwe", "asd", "zxc", "rty", "fgh", "vbn", "uiop",
+            "11111", "22222", "aaaaa", "bbbbb", "mmmmm", "nnnnn"
+        ];
+        const lower = limpio.toLowerCase();
+        for (let seq of secuenciasBasura) {
+            if (lower.includes(seq)) return false;
+        }
+        if (!/[aeiouáéíóúü]/i.test(limpio)) return false;
+        if (/(.)\1{4,}/.test(limpio)) return false;
+        return true;
+    }
+
+    function esNombreValido(nombre) {
+        if (!tieneSentido(nombre, 3, 30)) return false;
+        const soloLetras = /^[a-zA-ZáéíóúñüÁÉÍÓÚÑü\s\.\'\-]+$/;
+        return soloLetras.test(nombre.trim());
+    }
+
+    // ----- VALIDACIÓN DE CÉDULA: EXACTAMENTE 8 DÍGITOS -----
+    function esCedulaValida(cedula) {
+        return /^\d{8}$/.test(cedula);
+    }
+
+    function esEmailValido(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    // Evaluar fortaleza de contraseña (igual que antes)
+    function evaluarFortaleza(password) {
+        let nivel = 0;
+        if (password.length >= 8) nivel++;
+        if (/[a-z]/.test(password)) nivel++;
+        if (/[A-Z]/.test(password)) nivel++;
+        if (/\d/.test(password)) nivel++;
+        if (/[^A-Za-z0-9]/.test(password)) nivel++;
+
+        if (password.length < 8 || nivel < 3) return 'Débil';
+        if (nivel < 5) return 'Media';
+        return 'Segura';
+    }
+
+    // Mostrar fortaleza en tiempo real
+    const passwordInput = document.getElementById('password');
+    const passwordStrengthDiv = document.getElementById('PasswordStrength');
+
+    passwordInput.addEventListener('input', () => {
+        const valor = passwordInput.value.trim();
+        if (valor === '') {
+            passwordStrengthDiv.textContent = '';
+            passwordStrengthDiv.className = 'Password-Strength';
+            return;
+        }
+        const fortaleza = evaluarFortaleza(valor);
+        passwordStrengthDiv.textContent = 'Nivel: ' + fortaleza;
+        passwordStrengthDiv.className = 'Password-Strength Strength-' + fortaleza;
+    });
+
+    // ---------- FILTRO CÉDULA (solo números, máx 8) ----------
+    const cedulaInput = document.getElementById('cedula');
+    cedulaInput.addEventListener('input', function (e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length > 8) {
+            this.value = this.value.slice(0, 8);
+        }
+    });
+    cedulaInput.addEventListener('paste', function (e) {
+        setTimeout(() => {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 8) {
+                this.value = this.value.slice(0, 8);
+            }
+        }, 0);
+    });
+
+    // ---------- VISIBILIDAD CONTRASEÑA ----------
+    const TogglePasswordBtn = document.getElementById('TogglePasswordBtn');
+    TogglePasswordBtn.addEventListener('click', () => {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            TogglePasswordBtn.classList.add('Activado');
+        } else {
+            passwordInput.type = 'password';
+            TogglePasswordBtn.classList.remove('Activado');
+        }
+    });
+
+    // ---------- MODAL ----------
+    const Formulario = document.getElementById('FormEncargado');
+    const Modal = document.getElementById('ModalAlerta');
+    const ModalIcono = document.getElementById('ModalIcono');
+    const TituloAlerta = document.getElementById('modalTitulo');
+    const MensajeAlerta = document.getElementById('modalMensaje');
+    const BtnCerrar = document.getElementById('BtnCerrar');
+
+    function MostrarAlerta(Tipo, Titulo, Mensaje) {
+        ModalIcono.className = "Icono-Alerta " + (Tipo === "success" ? "Exito-Color" : "Error-Color");
+        ModalIcono.innerHTML = Tipo === "success" ? "✓" : "!";
+        TituloAlerta.innerText = Titulo;
+        MensajeAlerta.innerText = Mensaje;
+        Modal.style.display = 'flex';
+    }
+
+    function CerrarModal() { Modal.style.display = 'none'; }
+    BtnCerrar.onclick = CerrarModal;
+
+    // ---------- ENVÍO DEL FORMULARIO ----------
+    Formulario.onsubmit = async function (e) {
+        e.preventDefault();
+        const Nombre = document.getElementById('nombre').value.trim();
+        const Cedula = document.getElementById('cedula').value.trim();
+        const Correo = document.getElementById('correo').value.trim();
+        const Usuario = document.getElementById('usuario').value.trim();
+        const Password = passwordInput.value.trim();
+
+        if (!Nombre || !Cedula || !Correo || !Usuario || !Password) {
+            MostrarAlerta("error", "Campos Vacíos", "Por favor, complete todos los campos.");
+            return;
+        }
+
+        if (Usuario.toLowerCase() !== Nombre.toLowerCase()) {
+            MostrarAlerta("error", "Usuario Inválido", "El nombre de usuario debe ser igual al nombre completo del encargado. Por favor, coloque el mismo nombre en ambos campos.");
+            return;
+        }
+
+        // Validación de nombre con las nuevas condiciones
+        if (!esNombreValido(Nombre)) {
+            MostrarAlerta("error", "Nombre Inválido", "El nombre completo no es válido. Debe tener entre 3 y 30 caracteres, sin repeticiones absurdas.");
+            return;
+        }
+
+        if (!esCedulaValida(Cedula)) {
+            MostrarAlerta("error", "Cédula Inválida", "La cédula debe tener exactamente 8 dígitos numéricos.");
+            return;
+        }
+
+        if (!esEmailValido(Correo)) {
+            MostrarAlerta("error", "Correo Inválido", "El correo electrónico no es correcto. Por favor ingrese una dirección válida (ejemplo: nombre@dominio.com).");
+            return;
+        }
+
+        const fortaleza = evaluarFortaleza(Password);
+        if (fortaleza !== 'Segura') {
+            MostrarAlerta("error", "Contraseña Débil", "La contraseña debe ser segura. Asegúrate de que tenga al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (ej: @, #, $, etc.).");
+            return;
+        }
+
+        try {
+            const FormDataObj = new FormData();
+            FormDataObj.append('nombre', Nombre);
+            FormDataObj.append('cedula', Cedula);
+            FormDataObj.append('correo', Correo);
+            FormDataObj.append('usuario', Usuario);
+            FormDataObj.append('password', Password);
+
+            const Response = await fetch('guardar_encargado.php', { method: 'POST', body: FormDataObj });
+            const Result = await Response.json();
+
+            if (Result.success) {
+                MostrarAlerta("success", "Registro Exitoso", Result.message);
+                Formulario.reset();
+                TogglePasswordBtn.classList.remove('Activado');
+                passwordStrengthDiv.textContent = '';
+                setTimeout(() => { CerrarModal(); }, 2000);
+            } else {
+                MostrarAlerta("error", "Error", Result.message);
+            }
+        } catch (Error) {
+            MostrarAlerta("error", "Error De Conexión", "No Se Pudo Conectar Con El Servidor.");
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', InicializarTema);
+</script>
+<script src="boton_dashboard_universal.js"></script>
+</body>
+
+</html>
